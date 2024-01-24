@@ -41,7 +41,6 @@ void setup() {
   }          
 
   delay(3000);  // delay to allow the ESC to recognize the stopped signal
-  Serial.println("Setup complete");
 }
 
 void loop() { 
