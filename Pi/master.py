@@ -21,7 +21,7 @@ def recv():
 if __name__ == '__main__':
 	connect(1)
 	while True:
-		inp = input("Data: ")
+		inp = input("Input (thrust, steering): ")
 		if inp == "-1":
 			exit()
 		send(inp)
