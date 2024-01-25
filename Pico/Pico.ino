@@ -10,7 +10,11 @@ Servo ESC;
 Servo SteeringServo;
 
 
+<<<<<<< HEAD
   
+=======
+int esc_value = 1550;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
+>>>>>>> cd22ab692fce897f1832161a8700b586846843de
 int servo_deg = 0;
 
 int thrust = 1500; // Set signal value, which should be between 1100 and 1900, 1500 is the stop command
