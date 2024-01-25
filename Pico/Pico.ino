@@ -13,7 +13,7 @@ Servo SteeringServo;
 
 DFRobot_BMX160 bmx160;
 
-int esc_value = 1500;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
+int esc_value = 1550;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
 int servo_deg = 0;
 
 int thrust;
