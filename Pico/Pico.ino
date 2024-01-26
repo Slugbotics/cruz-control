@@ -1,5 +1,3 @@
-#include <DFRobot_BMX160.h>
-
 #include <Servo.h>
 #include <Wire.h>
 #include <Serial.h>
@@ -11,16 +9,22 @@
 Servo ESC;
 Servo SteeringServo;
 
-DFRobot_BMX160 bmx160;
 
-int esc_value = 1500;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
+<<<<<<< HEAD
+  
+=======
+int esc_value = 1550;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
+>>>>>>> cd22ab692fce897f1832161a8700b586846843de
 int servo_deg = 0;
 
-int thrust;
+int thrust = 1500; // Set signal value, which should be between 1100 and 1900, 1500 is the stop command
 int steering;
 
 bool interrupt = false;
-String message = String("");
+
+char inpData[32]; // 32 byte char array, can be larger based on data needs
+String data = String();
+
 
 
 void setup() {
@@ -31,70 +35,80 @@ void setup() {
   ESC.attach(ESCPin);           // Motor ESC
   ESC.writeMicroseconds(1500);  // send "stop" signal to ESC.
 
-  Wire.begin(30);                // By default, pins are GPIO 0 (pin 1) and GPIO 1 (pin 2)
-  Wire.onReceive(receiveEvent);  // register event
+  Wire.begin(0x8);               // communicate on address 8     
+  Wire.onReceive(receiveEvent);  // register events
   Wire.onRequest(requestInterrupt);
   
-   if (bmx160.begin() != true){
-    Serial.println("init false");
-    while(1);
-  }          
-
   delay(3000);  // delay to allow the ESC to recognize the stopped signal
 }
 
 void loop() { 
-  sBmx160SensorData_t Omagn, Ogyro, Oaccel;
+  if (interrupt == true) {
+    Serial.print("Thrust: ");
+    Serial.print(thrust);
+    Serial.print(" Steering: ");
+    Serial.println(steering);
+    interrupt = false;
+  }
 
-  /* Get a new sensor event */
-  bmx160.getAllData(&Omagn, &Ogyro, &Oaccel);
 
-  /* Display the magnetometer results (magn is magnetometer in uTesla) */
-  Serial.print("M ");
-  Serial.print("X: "); Serial.print(Omagn.x); Serial.print("  ");
-  Serial.print("Y: "); Serial.print(Omagn.y); Serial.print("  ");
-  Serial.print("Z: "); Serial.print(Omagn.z); Serial.print("  ");
-  Serial.println("uT");
+  delay(100);
+  
 
-  SteeringServo.write(servo_deg);
-  ESC.writeMicroseconds(esc_value);  // Send signal to ESC.
+  // SteeringServo.write(servo_deg);
+  ESC.writeMicroseconds(thrust);  // Send signal to ESC.
 }
 
 
 void requestInterrupt() {
 
-  if (!interrupt && message != "") {
-    thrust = message.substring(0, message.indexOf(",")).toInt();
-    servo_deg = message.substring(message.indexOf(",")+1, message.length()).toInt();
-    message = "";
-    Serial.println(thrust+" "+ servo_deg);
-  }
+  // if (!interrupt && message != "") {
+  //   thrust = message.substring(0, message.indexOf(",")).toInt();
+  //   servo_deg = message.substring(message.indexOf(",")+1, message.length()).toInt();
+  //   message = "";
+  //   Serial.println(thrust+" "+ servo_deg);
+  // }
 
 }
 
 
-// Expected string structure: int, int
-// First int is the motor percentage, second int is the stearing angle
 void receiveEvent(int howMany) {
 
-  char string[MAX_I2C_MESSAGE];
-  int recieved = 0;
-  while (1 < Wire.available()) {
-    char c = Wire.read();
-    string[recieved] = c;
-    recieved++;
+  for (int i = 0; i < howMany; i++) {
+    inpData[i] = Wire.read();
+    inpData[i + 1] = '\0'; //add null after ea. char
   }
 
-  Serial.println(string);
+  //RPi first byte is cmd byte so shift everything to the left 1 pos so temp contains our string
+  for (int i = 0; i < howMany; ++i) inpData[i] = inpData[i + 1];
+  data = inpData;
+  thrust = data.substring(0, data.indexOf(",")).toInt();
+  servo_deg = data.substring(data.indexOf(",")+1, data.length()).toInt();
 
-  int x = Wire.read();  // receive byte as an integer
-  string[recieved] = x;
-  char* token1 = strtok(string, ", ");
-  char* token2 = strtok(NULL, ", ");
-
-  thrust = atoi(token1);
-  steering = atoi(token2);
-
-  esc_value = map(thrust, -100, 100, 1100, 1900);
-  servo_deg = steering;
 }
+
+
+// void receiveEvent(int howMany) {
+//   Serial.println("recv");
+
+//   char string[MAX_I2C_MESSAGE];
+//   int recieved = 0;
+//   while (1 < Wire.available()) {
+//     char c = Wire.read();
+//     string[recieved] = c;
+//     recieved++;
+//   }
+
+//   Serial.println(string);
+
+//   int x = Wire.read();  // receive byte as an integer
+//   string[recieved] = x;
+//   char* token1 = strtok(string, ", ");
+//   char* token2 = strtok(NULL, ", ");
+
+//   thrust = atoi(token1);
+//   steering = atoi(token2);
+
+//   esc_value = map(thrust, -100, 100, 1100, 1900);
+//   servo_deg = steering;
+// }
