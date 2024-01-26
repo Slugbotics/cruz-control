@@ -1,6 +1,6 @@
 #include <Servo.h>
 #include <Wire.h>
-#include <Serial.h>
+// #include <Serial.h>
 #include <string>
 #define MAX_I2C_MESSAGE 100
 #define ESCPin 9
@@ -10,11 +10,7 @@ Servo ESC;
 Servo SteeringServo;
 
 
-<<<<<<< HEAD
-  
-=======
 int esc_value = 1550;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
->>>>>>> cd22ab692fce897f1832161a8700b586846843de
 int servo_deg = 0;
 
 int thrust = 1500; // Set signal value, which should be between 1100 and 1900, 1500 is the stop command
@@ -55,7 +51,7 @@ void loop() {
   delay(100);
   
 
-  // SteeringServo.write(servo_deg);
+  SteeringServo.write(servo_deg);
   ESC.writeMicroseconds(thrust);  // Send signal to ESC.
 }
 
@@ -82,9 +78,8 @@ void receiveEvent(int howMany) {
   //RPi first byte is cmd byte so shift everything to the left 1 pos so temp contains our string
   for (int i = 0; i < howMany; ++i) inpData[i] = inpData[i + 1];
   data = inpData;
-  thrust = data.substring(0, data.indexOf(",")).toInt();
-  servo_deg = data.substring(data.indexOf(",")+1, data.length()).toInt();
-
+  thrust = map(data.substring(0, data.indexOf(",")).toInt(),-100,100,1100,1900);
+  servo_deg = map(data.substring(data.indexOf(",")+1, data.length()).toInt(), -15,15, 55,125);
 }
 
 
