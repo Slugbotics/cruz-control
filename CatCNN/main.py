@@ -36,7 +36,6 @@ def imshow(img):
 
 
 if __name__ == "__main__":
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     batch_size = 4
     num_epochs = 20
