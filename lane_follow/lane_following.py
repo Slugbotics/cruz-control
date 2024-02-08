@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 
 device = "cpu"
-model = PPO.load("../ppo-racecar.zip")
+model = PPO.load("/home/slugbotics/f1tenth-2023/ppo-racecar.zip")
 
 cap = cv2.VideoCapture(0)
 
@@ -20,8 +20,3 @@ while(True):
     img = np.transpose(img, (2, 0, 1))
     action, _ = model.predict(img)
     print(action)
-    
-    # Display the resulting frame
-    cv2.imshow('frame',frame)
-    if cv2.waitKey(20) & 0xFF == ord('q'):
-        break
