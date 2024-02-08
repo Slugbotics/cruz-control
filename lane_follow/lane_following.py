@@ -5,7 +5,7 @@ import os
 import numpy as np
 import cv2
 
-device = "cpu"
+device = "cuda"
 model = PPO.load("../ppo-racecar.zip")
 
 cap = cv2.VideoCapture(0)
