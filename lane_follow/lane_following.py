@@ -5,8 +5,13 @@ import os
 import numpy as np
 import cv2
 
+<<<<<<< HEAD
 device = "cuda"
 model = PPO.load("../ppo-racecar.zip")
+=======
+device = "cpu"
+model = PPO.load("/home/slugbotics/f1tenth-2023/ppo-racecar.zip")
+>>>>>>> 2039e7b1fb4aee211d2717c9465ea6d24a4f6412
 
 cap = cv2.VideoCapture(0)
 
@@ -20,8 +25,3 @@ while(True):
     img = np.transpose(img, (2, 0, 1))
     action, _ = model.predict(img)
     print(action)
-    
-    # Display the resulting frame
-    cv2.imshow('frame',frame)
-    if cv2.waitKey(20) & 0xFF == ord('q'):
-        break
