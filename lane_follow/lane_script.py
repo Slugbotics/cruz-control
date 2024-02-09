@@ -1,6 +1,12 @@
 # This file needs work
 import carla
 import random
+import gymnasium as gym
+from stable_baselines3 import PPO
+import torch
+import os
+import numpy as np
+import cv2
 
 # Connect to the client and retrieve the world object
 client = carla.Client('localhost', 2000)
@@ -33,3 +39,23 @@ camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
 
 # We spawn the camera and attach it to our ego vehicle
 camera = world.spawn_actor(camera_bp, camera_init_trans, attach_to=ego_vehicle)
+# Model Control
+
+device = "cpu"
+model = PPO.load("../ppo-racecar.zip")
+cc = carla.ColorConverter.Raw
+control = carla.VehicleControl()
+while(True):
+    # Capture frame-by-frame
+    camera.listen(lambda image: image.save_to_disk('out/frame.png', cc)) # This does not seem to be generating the image file at the moment, work on this
+
+    frame = cv2.imread('_out/frame.png') 
+    # Our operations on the frame come here
+    img = cv2.resize(frame, (128,128))
+    img = np.transpose(img, (2, 0, 1))
+    action, _ = model.predict(img)
+    control.throttle = action[0]
+    control.steer = action[1]
+    ego_vehicle.apply_control(control)
+    
+
