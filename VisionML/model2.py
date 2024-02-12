@@ -85,10 +85,8 @@ class LaneCNN(nn.Module):
         self.relu9 = nn.ReLU()
         self.fc4 = nn.Linear(64,2)
 
-        self.logSoftmax = LogSoftmax(dim=1)
 
     def forward(self, x):
-        # x = self.pool1(self.relu2(self.conv2(self.relu1(self.conv1))))
         x = self.pool1(self.relu2(self.conv2(self.relu1(self.conv1(x)))))
         x = self.pool2(self.relu4(self.conv4(self.relu3(self.conv3(x)))))
         x = self.pool3(self.relu6(self.conv6(self.relu5(self.conv5(x)))))
@@ -98,5 +96,4 @@ class LaneCNN(nn.Module):
         x = self.relu8(self.fc2(x))
         x = self.relu9(self.fc3(x))
         x = self.fc4(x)
-        x = self.logSoftmax(x)
         return x
