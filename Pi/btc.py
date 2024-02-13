@@ -1,4 +1,4 @@
-from smbus import SMBus
+# from smbus import SMBus
 import pygame
 pygame.init()
 
@@ -16,8 +16,8 @@ joystick2 = [0,0] #x axis [-1 left, 1 right] y axis [-1 up, 1 down]
 dpad = [0,0] #x axis [-1 left, 1 right] y axis [-1 down, 1 up]
 buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # a b x y lb rb share option lhat rhat
 
-maxSteer = 20
-maxThrottle = 30
+maxSteer = 30
+maxThrottle = 5
 
 def num_to_range(num, inMin, inMax, outMin, outMax):
   return int(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)))
@@ -47,9 +47,9 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.JOYAXISMOTION:
             if event.axis == 4:
-                triggers[0]=event.value
+                triggers[0]=event.value + 1
             if event.axis == 5:
-                triggers[1]=event.value
+                triggers[1]=event.value + 1
             if event.axis == 0:
                 joystick1[0]=event.value
             if event.axis == 1:
@@ -64,15 +64,17 @@ while True:
             buttons[event.button]=0
         if event.type == pygame.JOYBUTTONDOWN:
             buttons[event.button]=1
-        target = num_to_range(-(triggers[0]+1)/2+(triggers[1]+1)/2, -1, 1, -maxThrottle, maxThrottle)
-        angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        combinedTriggerValue = triggers[1]/2 - triggers[0]/2
 
-        rumble = round( (-(triggers[0]+1)/2+(triggers[1]+1)/2), 1)
-        if int(triggers[0])==1 and int(triggers[1])==1:
-            Controller.rumble(0.2,0,0)
-        elif rumble == 0 :
-            Controller.rumble(0,0,0)
-        else:
-            Controller.rumble(pow(1-abs(rumble),1)-0.4,pow(abs(rumble),-3)-0.9,0)
-        send(str(target, angle))
+        if combinedTriggerValue > 1:
+             combinedTriggerValue = 1
+        if combinedTriggerValue < -1:
+             combinedTriggerValue = -1
+
+        target = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
+        angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        sendString = str(target) + "," + str(angle)
+
+        print(sendString)
+        # send(str(target) + "," + str(angle))
 
