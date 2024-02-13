@@ -40,6 +40,9 @@ def send(data):
 	bus.write_i2c_block_data(addr, 0x00, byteValue) 
 	return -1
 
+def recv():
+     pass
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.JOYAXISMOTION:
@@ -71,5 +74,5 @@ while True:
             Controller.rumble(0,0,0)
         else:
             Controller.rumble(pow(1-abs(rumble),1)-0.4,pow(abs(rumble),-3)-0.9,0)
-        send(target, angle)
+        send(str(target, angle))
 
