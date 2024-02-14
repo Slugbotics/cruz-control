@@ -1,4 +1,6 @@
 CatCNN/data/
 VisionML/__pycache__/
 VisionML/dc_dataset_1/
+VisionML/dc_dataset_2/
+VisionML/dc_dataset_3/
 VisionML/models/

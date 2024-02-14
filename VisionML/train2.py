@@ -9,14 +9,14 @@ from torchvision import transforms
 from torch.utils.data import DataLoader, random_split
 
 learning_rate = 0.001
-batch_size = 75
+batch_size = 64
 epochs = 10
 
 def train():
     path = sys.argv[1]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     transform = transforms.Compose([
-        transforms.Resize((224, 224),antialias=True),
+        transforms.Resize((224, 224), antialias=True),
         transforms.ToTensor()
     ])
 
@@ -27,7 +27,7 @@ def train():
 
     # multithreaded data loading
     trainloader = DataLoader(train, batch_size=batch_size, 
-                             shuffle=True, num_workers=4)
+                             shuffle=True, num_workers=2)
     valloader = DataLoader(val, batch_size=batch_size, 
                        shuffle=False, num_workers=2)
     
@@ -37,26 +37,43 @@ def train():
     print(f"Training on {device}")
 
     for epoch in range(epochs):
-        running_loss = 0.0
-        for i, (inputs,labels) in enumerate(trainloader,0):
+        net.train()
+        for inputs, (steering_targets, throttle_targets) in trainloader:
             inputs = inputs.to(device)
-            labels = labels.to(device)
-
-            #forward pass
-            outputs = net(inputs)
-            loss = criterion(outputs, labels)
-
-            #backwards + optimize
+            steering_targets = steering_targets.to(device)
+            throttle_targets = throttle_targets.to(device)
+            
             optimizer.zero_grad()
-            loss.backward()
+            
+            # Forward pass
+            steering_preds, throttle_preds = net(inputs)
+            
+            # Compute loss
+            steering_loss = criterion(steering_preds, steering_targets)
+            throttle_loss = criterion(throttle_preds, throttle_targets)
+            total_loss = steering_loss + throttle_loss
+
+            # Backward pass
+            total_loss.backward()
+
+            # Update weights
             optimizer.step()
 
-            running_loss = loss.item()
-            if i % 100 == 99:
-                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 100:.3f}')
-                running_loss = 0.0
-                
-        torch.save(net.state_dict(), os.path.join("models", f"{path}_e{epoch}.pth"))
+        # Validation
+        net.eval()
+        with torch.no_grad():
+            for val_inputs, (val_steering_targets, val_throttle_targets) in valloader:
+                val_inputs = val_inputs.to(device)  # Move validation data to GPU
+                val_steering_targets = val_steering_targets.to(device)
+                val_throttle_targets = val_throttle_targets.to(device)
+
+                val_steering_preds, val_throttle_preds = net(val_inputs)
+                val_steering_loss = criterion(val_steering_preds, val_steering_targets)
+                val_throttle_loss = criterion(val_throttle_preds, val_throttle_targets)
+                val_total_loss = val_steering_loss + val_throttle_loss
+
+        print(f'Epoch {epoch + 1}/{epochs}, Loss: {total_loss.item():.4f}, Validation Loss: {val_total_loss.item():.4f}')
+        torch.save(net.state_dict(), os.path.join("models", f"{path}_e{epoch+1}.pth"))
 
 
     print("Finished training") 
