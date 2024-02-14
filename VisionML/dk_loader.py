@@ -65,7 +65,7 @@ def test_loader():
         transforms.ToTensor()
     ])
 
-    dataset = DataCC("dc_dataset_1", transform=transform, test=True)
+    dataset = DataCC("dc_dataset_2", transform=transform, test=True)
     train_size = int(0.3 * len(dataset))
     val_size = len(dataset) - train_size
     train, val = random_split(dataset, [train_size, val_size])
@@ -78,7 +78,7 @@ def test_loader():
         steering_targets = steering_targets.to(device)
         throttle_targets = throttle_targets.to(device)
 
-        print(inputs, steering_targets, throttle_targets) # return img_name
+        # print(inputs, steering_targets, throttle_targets) # return img_name
 
 if __name__ == '__main__':
     test_loader()

@@ -20,7 +20,7 @@ def train():
         transforms.ToTensor()
     ])
 
-    dataset = DataCC("dc_dataset_1", transform=transform)
+    dataset = DataCC("dc_dataset_2", transform=transform)
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
     train, val = random_split(dataset, [train_size, val_size])

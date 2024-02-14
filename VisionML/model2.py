@@ -10,24 +10,7 @@
 # reduces overfitting by providing an abstracted version of the input data
 
 
-# CONV
-# RELU
-# CONV
-# RELU
-# POOL
-
-# CONV
-# RELU
-# CONV
-# RELU
-# POOL
-
-# FULLY CONNECTED LAYERS
-
-import sys
-import torch
 import torch.nn as nn
-from torch.nn import LogSoftmax
 
 
 class LaneCNN(nn.Module):
