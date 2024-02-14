@@ -1,6 +1,6 @@
 
 import cv2 as cv
-from camera import VideoCapture
+from CAMERA import VideoCapture
 
 cap = VideoCapture(0)
 while True:
