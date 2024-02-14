@@ -16,8 +16,8 @@ joystick2 = [0,0] #x axis [-1 left, 1 right] y axis [-1 up, 1 down]
 dpad = [0,0] #x axis [-1 left, 1 right] y axis [-1 down, 1 up]
 buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # a b x y lb rb share option lhat rhat
 
-maxSteer = 5
-maxThrottle = 50
+maxSteer = 50
+maxThrottle = 5
 
 def num_to_range(num, inMin, inMax, outMin, outMax):
   return round(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)), 2)
@@ -39,6 +39,9 @@ def send(data):
 	# print(byteValue)
 	bus.write_i2c_block_data(addr, 0x00, byteValue) 
 	return -1
+
+def recv():
+     pass
 
 connect(1)
 
@@ -63,16 +66,19 @@ while True:
             buttons[event.button]=0
         if event.type == pygame.JOYBUTTONDOWN:
             buttons[event.button]=1
-        angle = num_to_range(-(triggers[1]+1)/2+(triggers[0]+1)/2, -1, 1, -maxSteer, maxSteer)
-        target = num_to_range(joystick1[0], -1, 1, -maxThrottle, maxThrottle)
+            
+        #on pi, triggers[0] and [1] is flipped, windows order, triggers[1]-triggers[0]
+        combinedTriggerValue = triggers[0]/2 - triggers[1]/2
 
-        # rumble = round( (-(triggers[0]+1)/2+(triggers[1]+1)/2), 1)
-        # if int(triggers[0])==1 and int(triggers[1])==1:
-        #     Controller.rumble(0.2,0,0)
-        # elif rumble == 0 :
-        #     Controller.rumble(0,0,0)
-        # else:
-        #     Controller.rumble(pow(1-abs(rumble),1)-0.4,pow(abs(rumble),-3)-0.9,0)
-        print(str(target) + ", " + str(angle))
-        send(str(target) + ", " + str(angle))
+        if combinedTriggerValue > 1:
+             combinedTriggerValue = 1
+        if combinedTriggerValue < -1:
+             combinedTriggerValue = -1
+
+        target = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
+        angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        sendString =  str(angle) + "," + str(target)
+
+        print(sendString)
+        send(sendString)
 
