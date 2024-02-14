@@ -144,12 +144,12 @@ def getTime():
     time = str(datetime.fromtimestamp(timestamp))
 
     # format the time string, removing miliseconds, periods, replacing colons
-    # windows doesn't allow for colons in filenames (hiddenstreams) use Modifier Letter Colon instead
     time = time[:time.find('.')]
     return str(time)
 
 # set name of file to time it was recorded
-fileName = "data"
+fileName = "data" #getTime()
+csvfields = ["timestamp", "thrust-steering", "imu"]
 
 # createcsv file and video
 file_directory = str(os.path.dirname(__file__))
@@ -191,7 +191,7 @@ def record():
                "imu: ": imuData}
     
     # write to csv file using csvWriter
-    csvwriter.writerow(csvData)
+    csvwriter.writerow(csvData, fieldnames=csvfields)
 
 if __name__ == "__main__":
 
