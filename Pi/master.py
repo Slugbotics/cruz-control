@@ -5,11 +5,12 @@ import csv
 from enum import Enum
 from smbus import SMBus
 import pygame
-from CAMERA import VideoCapture
+import cv2
 from BMX160 import BMX160
+pygame.init()
 
 # check if controller detected
-if len(pygame.joystick.get_count) == 0:
+if pygame.joystick.get_count() == 0:
 	raise Exception("No gamepads detected!")
 
 # commands to enable xbox controller vibration motors
@@ -145,11 +146,10 @@ def getTime():
     # format the time string, removing miliseconds, periods, replacing colons
     # windows doesn't allow for colons in filenames (hiddenstreams) use Modifier Letter Colon instead
     time = time[:time.find('.')]
-    time = time.replace(":", "꞉")
     return str(time)
 
 # set name of file to time it was recorded
-fileName = getTime()
+fileName = "data"
 
 # createcsv file and video
 file_directory = str(os.path.dirname(__file__))
@@ -195,8 +195,6 @@ def record():
 
 if __name__ == "__main__":
 
-    # initialize pygame, imu, camera and I2C
-    pygame.init()
     bmx = BMX160(1)
     Camera = VideoCapture()
     connect(1)
