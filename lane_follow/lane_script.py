@@ -16,7 +16,7 @@ world = client.get_world()
 
 blueprint_library = world.get_blueprint_library()
 
-bp = random.choice(blueprint_library.filter('vehicle'))
+bp = blueprint_library.find('vehicle_lincoln.mkz_2020')
 
 # A blueprint contains the list of attributes that define a vehicle's
 # instance, we can read them and modify some of them. For instance,
@@ -48,8 +48,8 @@ camera = world.spawn_actor(camera_bp, camera_init_trans, attach_to=ego_vehicle)
 
 # Set spectator transform, allow time for spawning
 time.sleep(0.2)
-spectator.set_transform(camera.get_transform())
-camera.destroy()
+spectator.set_transform(camera.get_transform()) # Delete this line and the next line for model implementation, this is purely for visualization of camera pov
+camera.destroy()  
 # # Model Control
 
 # device = "cpu"
