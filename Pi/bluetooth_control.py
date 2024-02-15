@@ -1,13 +1,16 @@
 from smbus import SMBus
-import pygame
-pygame.init()
+from evdev import InputDevice, categorize, ecodes
 
-import os
-os.environ['SDL_JOYSTICK_HIDAPI_XBOX'] = '1'
-os.environ['SDL_JOYSTICK_HIDAPI_XBOX_ONE'] = '1'
-Controller = pygame.joystick.Joystick(0)
-Controller.init()
-print ("Detected joystick " + Controller.get_name())
+# import os
+# os.environ['SDL_JOYSTICK_HIDAPI_XBOX'] = '1'
+# os.environ['SDL_JOYSTICK_HIDAPI_XBOX_ONE'] = '1'
+# Controller = pygame.joystick.Joystick(0)
+# Controller.init()
+# print ("Detected joystick " + Controller.get_name())
+
+gamepad = InputDevice('/dev/input/event6')
+print(gamepad.info)
+
 
 
 triggers = [-1.0,-1.0] #left joystick, right joystick [-1 default, 1 pressed]
@@ -60,6 +63,7 @@ while True:
                 joystick2[0]=event.value
             if event.axis == 3:
                 joystick2[1]=event.value
+
         if event.type == pygame.JOYHATMOTION: #d-pad
             dpad=[event.value[0],event.value[1]]
         if event.type == pygame.JOYBUTTONUP:

@@ -9,6 +9,9 @@ import cv2
 from BMX160 import BMX160
 pygame.init()
 
+from evdev import InputDevice, categorize, ecodes
+
+
 # check if controller detected
 if pygame.joystick.get_count() == 0:
 	raise Exception("No gamepads detected!")
@@ -21,6 +24,10 @@ Controller.init()
 
 # print statement to notify that controller is detected
 print ("Detected joystick " + Controller.get_name())
+
+
+gamepad = InputDevice('/dev/input/event6')
+print(gamepad)
 
 # arrays to store joystick inputs, triggers, dpad, buttons, and each joystick is treated as a separate entity in pygame
 # 
@@ -35,9 +42,8 @@ joystick1 = [0,0]
 joystick2 = [0,0] 
 dpad = [0,0] 
 buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 
-
 # max steering and throttle range, goes from -max to max for each variable
-maxSteer = 50
+maxSteer = 15
 maxThrottle = 5
 
 # store thrust, angle value being sent by pi for recording
@@ -47,7 +53,7 @@ targetString, cameraData = "NO-HEADING-DATA", "NO-CAMERA-DATA"
 class XB_AXIS_MAP(Enum):
      LTRIGGER=4
      RTRIGGER=5
-     LJOYX=0
+     LJOYX=5
      LJOYY=1
      RJOYX=2
      RJOYY=3
@@ -84,54 +90,23 @@ def recv():
      pass
 
 def controllerLoop():
+    for event in gamepad.read_loop():
+        angle = ""
+        throttle = ""
+        if event.code == 0:
+            angle = num_to_range(event.value, 3000, 60000, -maxSteer, maxSteer)
 
-    # read through all events
-    for event in pygame.event.get():
-
-        # assign all event values to respective arrays
-        # axis event (joystick and triggers)
-        if event.type == pygame.JOYAXISMOTION:
-            if event.axis == XB_AXIS_MAP.LTRIGGER:
-                triggers[0]=event.value
-            if event.axis == XB_AXIS_MAP.RTRIGGER:
-                triggers[1]=event.value
-            if event.axis == XB_AXIS_MAP.LJOYX:
-                joystick1[0]=event.value
-            if event.axis == XB_AXIS_MAP.LJOYY:
-                joystick1[1]=event.value
-            if event.axis == XB_AXIS_MAP.RJOYX:
-                joystick2[0]=event.value
-            if event.axis == XB_AXIS_MAP.RJOYY:
-                joystick2[1]=event.value
-        
-        # joyhatmotion event (dpad)
-        if event.type == pygame.JOYHATMOTION:
-            dpad=[event.value[0],event.value[1]]
-        
-        # joybutton events (buttons)
-        if event.type == pygame.JOYBUTTONUP:
-            buttons[event.button] = 0
-        if event.type == pygame.JOYBUTTONDOWN:
-            buttons[event.button] = 1
+        if event.code == 10:
+            throttle = num_to_range(event.value, 0, 1023, -maxThrottle, maxThrottle)
             
-        # on pi, triggers[0] and [1] is flipped, windows order, triggers[1]-triggers[0]
-        # set combinedTriggerValue to be +-1 if one trigger is pressed, 0 if both or none is pressed 
-        combinedTriggerValue = (triggers[0] + 1)/2 - (triggers[1] + 1)/2
+            
+              
 
-        # small bug makes triggers stick to value, cap total output to be in desired range
-        if combinedTriggerValue > 1:
-             combinedTriggerValue = 1
-        if combinedTriggerValue < -1:
-             combinedTriggerValue = -1
 
-        # map trigger input and joystick input to maxThrottle and maxSteer range
-        target = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
-        angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        # # create string to send over i2c
+        sendString =  str(angle) + "," + str(throttle)
+    
 
-        # create string to send over i2c
-        sendString =  str(angle) + "," + str(target)
-
-        # return string
         return sendString
 
 
@@ -155,7 +130,7 @@ csvfields = ["timestamp", "thrust-steering", "imu"]
 file_directory = str(os.path.dirname(__file__))
 output_path = file_directory + "/csv_out/"
 csv_out = open(output_path + str(fileName) + ".csv", "w")
-csvwriter = csv.DictWriter(csv_out)
+csvwriter = csv.DictWriter(csv_out, fieldnames=csvfields)
 
 video = cv2.VideoCapture(0) 
 
@@ -194,10 +169,11 @@ def record():
     csvwriter.writerow(csvData, fieldnames=csvfields)
 
 if __name__ == "__main__":
-
+    
     bmx = BMX160(1)
-    Camera = VideoCapture()
+    #Camera = VideoCapture()
     connect(1)
+    print("connected")
 
     # wait for bmx to finish initializing
     while not bmx.begin():
@@ -212,8 +188,9 @@ if __name__ == "__main__":
         if ret == True:
             video_file.write(frame)
         
-        record()
-        send(targetString)
+        # record()
+        if not targetString == None:
+            send(targetString)
 
     # Release objects and close frames
     # video.release() 
