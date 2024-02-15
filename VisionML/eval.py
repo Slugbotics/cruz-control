@@ -34,7 +34,7 @@ def main():
                         shuffle=False, num_workers=2)
 
     model = LaneCNN().to(device)
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
 
 
