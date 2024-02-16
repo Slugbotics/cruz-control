@@ -52,7 +52,7 @@ if __name__ == '__main__':
 			if event.code == 'ABS_RZ':
 				thrust = event.state
 			elif event.code == 'ABS_Z':
-				thrust = -event.state
+				thrust = -event.statecombinedTriggerValue
 		inp = str(translate(thrust,0, 1023, 0, 10))+","+str(translate(steering,-32700,32700,-20, 20))
 #		print(inp)
 #		if inp == "-1":
