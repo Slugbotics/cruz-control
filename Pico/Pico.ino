@@ -11,7 +11,7 @@ Servo SteeringServo;
 
 
 int esc_value = 1550;  // Set signal value, which should be between 1100 and 1900, 1500 is the center
-int servo_deg = 0;
+int servo_deg = 90;
 
 int thrust = 1500; // Set signal value, which should be between 1100 and 1900, 1500 is the stop command
 int steering;
@@ -26,7 +26,7 @@ String data = String();
 void setup() {
   Serial.begin(9600);
   SteeringServo.attach(ServoPin);  // Steering servo
-  SteeringServo.write(0);  // Set stearing servo to 0 degrees
+  SteeringServo.write(90);  // Set stearing servo to 0 degrees
 
   ESC.attach(ESCPin);           // Motor ESC
   ESC.writeMicroseconds(1500);  // send "stop" signal to ESC.
