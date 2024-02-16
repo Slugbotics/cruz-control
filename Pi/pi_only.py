@@ -17,9 +17,9 @@ def set_angle(angle):
 while True:
     # Move the servo from 0 to 180 dsegrees
     for angle in range(0, 180, 5):
-    set_angle(angle)
+        set_angle(angle)
     utime.sleep_ms(50)
     # Move the servo back from 180 to 0 degrees
     for angle in range(180, 0, -5):
-    set_angle(angle)
+        set_angle(angle)
     utime.sleep_ms(50) 
