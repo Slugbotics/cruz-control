@@ -10,12 +10,12 @@ pwm.freq(PWM_FREQUENCY)
 # Function to set the servo angle
 def set_angle(angle):
 # Convert the angle to a duty cycle value (0.5 ms to 2.5 ms pulse width)
-duty_cycle = int((angle / 180) * (1000000 / PWM_FREQUENCY) + 2500)
-# Set the duty cycle to control the servo
-pwm.duty_ns(duty_cycle)
+    duty_cycle = int((angle / 180) * (1000000 / PWM_FREQUENCY) + 2500)
+    # Set the duty cycle to control the servo
+    pwm.duty_ns(duty_cycle)
 # Main loop
 while True:
-    # Move the servo from 0 to 180 degrees
+    # Move the servo from 0 to 180 dsegrees
     for angle in range(0, 180, 5):
     set_angle(angle)
     utime.sleep_ms(50)
