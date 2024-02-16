@@ -16,7 +16,7 @@ world = client.get_world()
 
 blueprint_library = world.get_blueprint_library()
 
-bp = blueprint_library.find('vehicle_lincoln.mkz_2020')
+bp = blueprint_library.find('vehicle.dodge.charger_2020')
 
 # A blueprint contains the list of attributes that define a vehicle's
 # instance, we can read them and modify some of them. For instance,
@@ -38,7 +38,7 @@ spec_trans = carla.Transform(ego_vehicle.get_transform().transform(carla.Locatio
 spectator.set_transform(spec_trans)
 
 # Create a transform to place the camera on top of the vehicle
-camera_init_trans = carla.Transform(carla.Location(z=1.5))
+camera_init_trans = carla.Transform(carla.Location(z=2))
 
 # We create the camera through a blueprint that defines its properties
 camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
