@@ -1,25 +1,19 @@
-import machine
-import utime
-# Set the GPIO pin number (based on the connection in step 2)
-SERVO_PIN = 25
-# Set the PWM frequency (50Hz is common for servos)
-PWM_FREQUENCY = 50
-# Create a PWM object with the specified pin and frequency
-pwm = machine.PWM(machine.Pin(SERVO_PIN))
-pwm.freq(PWM_FREQUENCY)
-# Function to set the servo angle
-def set_angle(angle):
-# Convert the angle to a duty cycle value (0.5 ms to 2.5 ms pulse width)
-    duty_cycle = int((angle / 180) * (1000000 / PWM_FREQUENCY) + 2500)
-    # Set the duty cycle to control the servo
-    pwm.duty_ns(duty_cycle)
-# Main loop
-while True:
-    # Move the servo from 0 to 180 dsegrees
-    for angle in range(0, 180, 5):
-        set_angle(angle)
-    utime.sleep_ms(50)
-    # Move the servo back from 180 to 0 degrees
-    for angle in range(180, 0, -5):
-        set_angle(angle)
-    utime.sleep_ms(50) 
+# Set up libraries and overall settings
+import RPi.GPIO as GPIO  # Imports the standard Raspberry Pi GPIO library
+from time import sleep   # Imports sleep (aka wait or pause) into the program
+GPIO.setmode(GPIO.BOARD) # Sets the pin numbering system to use the physical layout
+
+# Set up pin 11 for PWM
+GPIO.setup(11,GPIO.OUT)  # Sets up pin 11 to an output (instead of an input)
+p = GPIO.PWM(11, 50)     # Sets up pin 11 as a PWM pin
+p.start(0)               # Starts running PWM on the pin and sets it to 0
+
+# Move the servo back and forth
+p.ChangeDutyCycle(3)     # Changes the pulse width to 3 (so moves the servo)
+sleep(1)                 # Wait 1 second
+p.ChangeDutyCycle(12)    # Changes the pulse width to 12 (so moves the servo)
+sleep(1)
+
+# Clean up everything
+p.stop()                 # At the end of the program, stop the PWM
+GPIO.cleanup()           # Resets the GPIO pins back to defaults
