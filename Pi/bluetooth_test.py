@@ -17,10 +17,13 @@ dpad = [0,0] #x axis [-1 left, 1 right] y axis [-1 down, 1 up]
 buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # a b x y lb rb share option lhat rhat
 
 maxSteer = 50
-maxThrottle = 5
+maxThrottle = 20
+
+prev_angle = 0
+prev_target = 0
 
 def num_to_range(num, inMin, inMax, outMin, outMax):
-  return round(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)), 2)
+  return int(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)))
 
 addr = 0x8 # Pico communication bus on address 4
 
@@ -35,9 +38,7 @@ def string2Bytes(val):
 	return retVal
 
 def send(data):
-	byteValue = string2Bytes(data)
-	# print(byteValue)
-	bus.write_i2c_block_data(addr, 0x00, byteValue) 
+	bus.write_i2c_block_data(addr, 0x00, data) 
 	return -1
 
 def recv():
@@ -77,8 +78,20 @@ while True:
 
         target = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
         angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        
+
         sendString =  str(angle) + "," + str(target)
 
         print(sendString)
-        send(sendString)
+	
+        if angle < 0:
+            if target < 0:
+                send([1,abs(angle) ,1, abs(target)])
+            else:
+                send([1, abs(angle), 0, abs(target)])
+        else:
+            if target < 0:
+                send([0, abs(angle),1, abs(target)])
+            else:
+                send([0, abs(angle), 0, abs(target)])
 

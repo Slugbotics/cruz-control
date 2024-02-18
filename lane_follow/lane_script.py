@@ -10,13 +10,17 @@ import os
 import numpy as np
 import cv2
 
+def rgb_callback(image, data_dict):
+    data_dict['image'] = np.reshape(np.copy(image.raw_data), (image.height, image.width, 4))
+
 # Connect to the client and retrieve the world object
+
 client = carla.Client('localhost', 2000)
 world = client.get_world()
 
 blueprint_library = world.get_blueprint_library()
 
-bp = blueprint_library.find('vehicle_lincoln.mkz_2020')
+bp = blueprint_library.find('vehicle.dodge.charger_2020')
 
 # A blueprint contains the list of attributes that define a vehicle's
 # instance, we can read them and modify some of them. For instance,
@@ -38,7 +42,7 @@ spec_trans = carla.Transform(ego_vehicle.get_transform().transform(carla.Locatio
 spectator.set_transform(spec_trans)
 
 # Create a transform to place the camera on top of the vehicle
-camera_init_trans = carla.Transform(carla.Location(z=1.5))
+camera_init_trans = carla.Transform(carla.Location(z=1.5, x=2))
 
 # We create the camera through a blueprint that defines its properties
 camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
@@ -48,23 +52,36 @@ camera = world.spawn_actor(camera_bp, camera_init_trans, attach_to=ego_vehicle)
 
 # Set spectator transform, allow time for spawning
 time.sleep(0.2)
-spectator.set_transform(camera.get_transform()) # Delete this line and the next line for model implementation, this is purely for visualization of camera pov
-camera.destroy()  
-# # Model Control
+# Initialize sensor data dict
 
-# device = "cpu"
-# model = PPO.load("../ppo-racecar.zip")
-# cc = carla.ColorConverter.Raw
-# control = carla.VehicleControl()
-# while(True):
-#     # Capture frame-by-frame
-#     camera.listen(lambda image: image.save_to_disk('out/frame.png', cc)) # This does not seem to be generating the image file at the moment, work on this
+image_w = camera_bp.get_attribute("image_size_x").as_int()
+image_h = camera_bp.get_attribute("image_size_y").as_int()
 
-#     frame = cv2.imread('_out/frame.png') 
-#     # Our operations on the frame come here
-#     img = cv2.resize(frame, (128,128))
-#     img = np.transpose(img, (2, 0, 1))
-#     action, _ = model.predict(img)
-#     control.throttle = action[0]
-#     control.steer = action[1]
-#     ego_vehicle.apply_control(control)
+sensor_data = {'image': np.zeros((image_h, image_w, 3))}
+
+camera.listen(lambda image: rgb_callback(image, sensor_data))
+
+# Model Control
+device = "cpu"
+model = PPO.load("ppo-racecar.zip") # Set this path appropriately
+control = carla.VehicleControl()
+cv2.namedWindow('RGB Camera', cv2.WINDOW_AUTOSIZE) # Visualize camera
+cv2.imshow('RGB Camera', sensor_data['image'])
+cv2.waitKey(1)
+
+while(True):
+    cv2.imshow('RGB Camera', sensor_data['image'])
+    frame = sensor_data['image'] 
+    # Our operations on the frame come here
+    img = cv2.resize(frame, (128,128))
+    img = np.transpose(img, (2, 0, 1))
+    print(img.shape)
+    action, _ = model.predict(img)
+    control.throttle = action[0]
+    control.steer = action[1]
+    ego_vehicle.apply_control(control)
+
+    if cv2.waitKey(1) == ord('q'):
+        break
+
+cv2.destroyAllWindows()
