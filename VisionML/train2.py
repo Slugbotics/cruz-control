@@ -12,15 +12,18 @@ learning_rate = 0.001
 batch_size = 64
 epochs = 10
 
+model_path = os.path.join(os.getcwd(), "models")
+
 def train():
-    path = sys.argv[1]
+    # path = sys.argv[1]
+    print("final model weights will be saved to: " + model_path)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     transform = transforms.Compose([
         transforms.Resize((224, 224), antialias=True),
         transforms.ToTensor()
     ])
 
-    dataset = DataCC("dc_dataset_2", transform=transform)
+    dataset = DataCC("hive_imu_left_lane_in_traffic", transform=transform)
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
     train, val = random_split(dataset, [train_size, val_size])
@@ -73,11 +76,11 @@ def train():
                 val_total_loss = val_steering_loss + val_throttle_loss
 
         print(f'Epoch {epoch + 1}/{epochs}, Loss: {total_loss.item():.4f}, Validation Loss: {val_total_loss.item():.4f}')
-        torch.save(net.state_dict(), os.path.join("models", f"{path}_e{epoch+1}.pth"))
+        torch.save(net.state_dict(), os.path.join(model_path, "epochs", f"model_e{epoch+1}.pth"))
 
 
     print("Finished training") 
-    torch.save(net.state_dict(), os.path.join("models", f"{path}_final.pth"))
+    torch.save(net.state_dict(), os.path.join(model_path, f"model_final.pth"))
 
 if __name__ == '__main__':
     train()
