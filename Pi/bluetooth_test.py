@@ -19,9 +19,6 @@ buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # a b x y lb rb share option lhat rhat
 maxSteer = 50
 maxThrottle = 20
 
-prev_angle = 0
-prev_target = 0
-
 def num_to_range(num, inMin, inMax, outMin, outMax):
   return int(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)))
 
@@ -76,22 +73,19 @@ while True:
         if combinedTriggerValue < -1:
              combinedTriggerValue = -1
 
-        target = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
+        throttle = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
         angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
         
 
-        sendString =  str(angle) + "," + str(target)
+        sendString =  str(angle) + "," + str(throttle)
 
         print(sendString)
 	
-        if angle < 0:
-            if target < 0:
-                send([1,abs(angle) ,1, abs(target)])
-            else:
-                send([1, abs(angle), 0, abs(target)])
-        else:
-            if target < 0:
-                send([0, abs(angle),1, abs(target)])
-            else:
-                send([0, abs(angle), 0, abs(target)])
+        angleSign = 0
+        throttleSign = 0
+        if angle > 0:
+             angleSign = 1
+        if throttle > 0:
+             throttleSign = 1
+        send([angleSign, abs(angle), throttleSign, abs(throttle)])
 
