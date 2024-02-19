@@ -22,7 +22,7 @@ def main():
         transforms.Resize((224, 224), antialias=True),  # Resize images to match the input size
     ])
 
-    dataset = DataCC("dc_dataset_1", transform=transform)
+    dataset = DataCC("hive_imu_left_lane_in_traffic", transform=transform)
     train_size = int(0.8 * len(dataset))
     val_size = len(dataset) - train_size
     train, val = random_split(dataset, [train_size, val_size])
