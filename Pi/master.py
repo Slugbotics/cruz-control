@@ -25,10 +25,6 @@ Controller.init()
 # print statement to notify that controller is detected
 print ("Detected joystick " + Controller.get_name())
 
-
-gamepad = InputDevice('/dev/input/event6')
-print(gamepad)
-
 # arrays to store joystick inputs, triggers, dpad, buttons, and each joystick is treated as a separate entity in pygame
 # 
 # PYGAME MAPPINGS
@@ -90,22 +86,50 @@ def recv():
      pass
 
 def controllerLoop():
-    for event in gamepad.read_loop():
-        angle = ""
-        throttle = ""
-        if event.code == 0:
-            angle = num_to_range(event.value, 3000, 60000, -maxSteer, maxSteer)
-
-        if event.code == 10:
-            throttle = num_to_range(event.value, 0, 1023, -maxThrottle, maxThrottle)
+    for event in pygame.event.get():
+        if event.type == pygame.JOYAXISMOTION:
+            if event.axis == 4:
+                triggers[0]=event.value + 1
+            if event.axis == 5:
+                triggers[1]=event.value + 1
+            if event.axis == 0:
+                joystick1[0]=event.value
+            if event.axis == 1:
+                joystick1[1]=event.value
+            if event.axis == 2:
+                joystick2[0]=event.value
+            if event.axis == 3:
+                joystick2[1]=event.value
+        if event.type == pygame.JOYHATMOTION: #d-pad
+            dpad=[event.value[0],event.value[1]]
+        if event.type == pygame.JOYBUTTONUP:
+            buttons[event.button]=0
+        if event.type == pygame.JOYBUTTONDOWN:
+            buttons[event.button]=1
             
-            
-              
+        #on pi, triggers[0] and [1] is flipped, windows order, triggers[1]-triggers[0]
+        combinedTriggerValue = triggers[0]/2 - triggers[1]/2
 
+        if combinedTriggerValue > 1:
+             combinedTriggerValue = 1
+        if combinedTriggerValue < -1:
+             combinedTriggerValue = -1
 
-        # # create string to send over i2c
+        throttle = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle, maxThrottle)
+        angle = num_to_range(joystick1[0], -1, 1, -maxSteer, maxSteer)
+        
+
         sendString =  str(angle) + "," + str(throttle)
-    
+
+        # print(sendString)
+	
+        # angleSign = 0
+        # throttleSign = 0
+        # if angle > 0:
+        #      angleSign = 1
+        # if throttle > 0:
+        #      throttleSign = 1
+        # send([angleSign, abs(angle), throttleSign, abs(throttle)])
 
         return sendString
 
@@ -144,7 +168,9 @@ frame_height = int(video.get(4))
 size = (frame_width, frame_height) 
 
 # create avi file
-video_file = cv2.VideoWriter(file_directory + str(fileName) + '.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size) 
+# file_directory + str(fileName) + '.avi'
+print(file_directory)
+video_file = cv2.VideoWriter(output_path+str(fileName)+'.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, size) 
 
 # csv format
 # timestamp, thrust, steering angle, acceleration
@@ -170,14 +196,14 @@ def record():
 
 if __name__ == "__main__":
     
-    bmx = BMX160(1)
+    # bmx = BMX160(1)
     #Camera = VideoCapture()
-    connect(1)
+    # connect(1)
     print("connected")
 
     # wait for bmx to finish initializing
-    while not bmx.begin():
-        time.sleep(2)
+    # while not bmx.begin():
+    #     time.sleep(2)
         
     # loop through controller function and send target values over I2C
     while True:
@@ -189,8 +215,8 @@ if __name__ == "__main__":
             video_file.write(frame)
         
         # record()
-        if not targetString == None:
-            send(targetString)
+        # if not targetString == None:
+        #     send(targetString)
 
     # Release objects and close frames
     # video.release() 

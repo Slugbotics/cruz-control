@@ -34,9 +34,11 @@ def string2Bytes(val):
 		retVal.append(ord(c))
 	return retVal
 
+import datetime
 def send(data):
-	bus.write_i2c_block_data(addr, 0x00, data) 
-	return -1
+    # print(datetime.datetime.now())
+    bus.write_i2c_block_data(addr, 0x00, data) 
+    return -1
 
 def recv():
      pass
@@ -87,5 +89,5 @@ while True:
              angleSign = 1
         if throttle > 0:
              throttleSign = 1
-        send([angleSign, abs(angle), throttleSign, abs(throttle)])
+        # send([angleSign, abs(angle), throttleSign, abs(throttle)])
 
