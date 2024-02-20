@@ -71,14 +71,15 @@ cv2.waitKey(1)
 
 while(True):
     cv2.imshow('RGB Camera', sensor_data['image'])
-    frame = sensor_data['image'] 
+    frame = sensor_data['image']
+    img = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
     # Our operations on the frame come here
-    img = cv2.resize(frame, (128,128))
+    img = cv2.resize(img, (128,128))
     img = np.transpose(img, (2, 0, 1))
-    print(img.shape)
     action, _ = model.predict(img)
-    control.throttle = action[0]
-    control.steer = action[1]
+    print(action)
+    control.throttle = float(action[0])
+    control.steer = float(action[1])
     ego_vehicle.apply_control(control)
 
     if cv2.waitKey(1) == ord('q'):
