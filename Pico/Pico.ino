@@ -23,7 +23,7 @@ void setup() {
   ESC.attach(ESCPin);                                           // Set the ESC pin to the ESC object
   ESC.writeMicroseconds(thrust_freq);                           // Set the motor to 0
 
-  Wire.begin();                                                 // Initialize I2C on specified address
+  Wire.begin(I2C_SLAVE_ADDRESS);                                                 // Initialize I2C on specified address
   Wire.onReceive(receiveEvent);
 
   delay(3000);                                                  // Wait for 3 seconds, this is because the ESC must recieve the 0 command on boot
