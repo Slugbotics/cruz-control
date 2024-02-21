@@ -34,7 +34,7 @@ def num_to_range(num, inMin, inMax, outMin, outMax):
 
 # enum mappings for xbox controller readability
 # triggers and joysticks are registered under the axis event, use enum for clarity
-class XB_AXIS_MAP(Enum):
+class XB_AXIS_MAP(int, Enum):
      LTRIGGER=4
      RTRIGGER=5
      LJOYX=0
