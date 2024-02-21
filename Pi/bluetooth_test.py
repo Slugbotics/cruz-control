@@ -17,7 +17,7 @@ joystick2 = [0,0] #x axis [-1 left, 1 right] y axis [-1 up, 1 down]
 dpad = [0,0] #x axis [-1 left, 1 right] y axis [-1 down, 1 up]
 buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] # a b x y lb rb share option lhat rhat
 
-maxSteer = 50 # max angle (degree)
+maxSteer = 80 # max angle (percent)
 maxThrottle = 20 # max throttle (percent)
 
 # values to write to servos
@@ -73,7 +73,7 @@ while True:
         # servo library breaks with values over expected range of -1, 1
         # ranges of angle and throttle are scaled to max steering angle 
         throttle = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle/100, maxThrottle/100)
-        angle = num_to_range(joystick1[0], -1, 1, -maxSteer/90, maxSteer/90)
+        angle = num_to_range(joystick1[0], -1, 1, -maxSteer/100, maxSteer/100)
         
         # print values
         print(str(throttle)+" "+str(angle))
