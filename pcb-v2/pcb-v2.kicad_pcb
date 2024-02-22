@@ -649,6 +649,11 @@
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
+    (model "${KIPRJMOD}/3d/jetson-maybe.stp"
+      (offset (xyz 90.5 -53 13))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 180 0))
+    )
   )
 
   (gr_arc (start 213.51875 136.525) (mid 213.053782 137.647532) (end 211.93125 138.1125)
