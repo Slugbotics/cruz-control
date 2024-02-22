@@ -42,7 +42,7 @@ spec_trans = carla.Transform(ego_vehicle.get_transform().transform(carla.Locatio
 spectator.set_transform(spec_trans)
 
 # Create a transform to place the camera on top of the vehicle
-camera_init_trans = carla.Transform(carla.Location(z=1.5, x=2))
+camera_init_trans = carla.Transform(carla.Location(z=0.5, x=5))
 
 # We create the camera through a blueprint that defines its properties
 camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
@@ -62,7 +62,7 @@ sensor_data = {'image': np.zeros((image_h, image_w, 3))}
 camera.listen(lambda image: rgb_callback(image, sensor_data))
 
 # Model Control
-device = "cpu"
+device = "cuda"
 model = PPO.load("ppo-racecar.zip") # Set this path appropriately
 control = carla.VehicleControl()
 cv2.namedWindow('RGB Camera', cv2.WINDOW_AUTOSIZE) # Visualize camera
