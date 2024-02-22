@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "txr")(type "KiCad")(uri "${KIPRJMOD}/footprints/txr.pretty")(options "")(descr ""))
+  (lib (name "terminal")(type "KiCad")(uri "${KIPRJMOD}/footprints/terminal.pretty")(options "")(descr ""))
+)
