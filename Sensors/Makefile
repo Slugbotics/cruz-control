@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -Wconversion -Wdouble-promotion -pedantic
+CXXFLAGS = -Wall -Wextra -Wconversion -Wdouble-promotion -pedantic -std=c++11
 LFLAGS =
 HEADERS =
 
