@@ -1,6 +1,9 @@
 from gpiozero import Servo
 from enum import Enum
 import pygame
+import threading
+from gpiozero.pins.pigpio import PiGPIOFactory
+from time import sleep
 
 # initialize pygame for services like joystick detection
 pygame.init()
@@ -25,12 +28,20 @@ angle = 0
 throttle = 0
 
 # initialize servo objects on gpio 11, 12
-SteeringServo = Servo(11) 
-DrivingServo = Servo(12)
+SteeringServo = Servo(17, initial_value = 0, min_pulse_width=1/1000, max_pulse_width=2/1000, pin_factory=PiGPIOFactory('127.0.0.1')) 
+DrivingServo = Servo(19, initial_value = 0,  min_pulse_width=1/1000, max_pulse_width=2/1000, pin_factory=PiGPIOFactory('127.0.0.1'))
+
+sleep(5)
 
 # function to round num to range, returns 2 decimal point value
 def num_to_range(num, inMin, inMax, outMin, outMax):
-  return round(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)), 2)
+  return round(outMin + (float(num - inMin) / float(inMax - inMin) * (outMax- outMin)), 3)
+
+def scale(val, src, dst):
+    """
+    Scale the given value from the scale of src to the scale of dst.
+    """
+    return ((val - src[0]) / (src[1]-src[0])) * (dst[1]-dst[0]) + dst[0]
 
 # enum mappings for xbox controller readability
 # triggers and joysticks are registered under the axis event, use enum for clarity
@@ -68,13 +79,34 @@ while True:
             buttons[event.button]=1
             
         #on pi, triggers[0] and [1] is flipped, windows order, triggers[1]-triggers[0]
-        combinedTriggerValue = triggers[0]/2 - triggers[1]/2
+        # combinedTriggerValue = triggers[0]/2 - triggers[1]/2
 
         # servo library breaks with values over expected range of -1, 1
         # ranges of angle and throttle are scaled to max steering angle 
-        throttle = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle/100, maxThrottle/100)
-        angle = num_to_range(joystick1[0], -1, 1, -maxSteer/100, maxSteer/100)
+        # throttle = num_to_range(combinedTriggerValue, -1, 1, -maxThrottle/100, maxThrottle/100)
+        # angle = num_to_range(joystick1[0], -1, 1, -maxSteer/100, maxSteer/100)
+
+        angle = round(joystick1[0], 3)
+
+        trig0 = 0
+
+        if (triggers[0] > 0):
+            trig0 = num_to_range(triggers[0], 0, 2, 0, 0.3)
+        else:
+            trig0 = 0
         
+        trig1 = 0
+
+        if (triggers[1] > 0):
+            trig1 = num_to_range(triggers[1], 0, 2, 0, 0.3)
+        else:
+            trig1 = 0
+        
+        print(trig1)
+
+        throttle = trig0 - trig1
+
+        # DrivingServo.value = throttle        
         # print values
-        print(str(throttle)+" "+str(angle))
+        # print(str(throttle)+" "+str(angle))
         
