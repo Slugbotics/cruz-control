@@ -21,3 +21,16 @@ class VideoCapture:
 
     def read(self):
         return self.q.get()
+
+
+
+if __name__ == '__main__':
+    cam = VideoCapture(0)
+    
+    while True:
+        cv2.imshow("frame1",cam.read())
+
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+
