@@ -53,6 +53,8 @@ class XB_AXIS_MAP(int, Enum):
 def bluetoothControl():
     SteeringServo.value = angle
     DrivingServo.value = throttle
+    global angle
+    global throttle
     for event in pygame.event.get():
         if event.type == pygame.JOYAXISMOTION:
             if event.axis == XB_AXIS_MAP.LTRIGGER:
@@ -75,7 +77,7 @@ def bluetoothControl():
             buttons[event.button]=1
             
         #on pi, triggers[0] and [1] is flipped, windows order, triggers[1]-triggers[0]
-
+        
         angle = round(joystick1[0], 3)
         throttle = num_to_range(triggers[0], 0, 2, 0, 0.3) - num_to_range(triggers[1], 0, 2, 0, 0.3)
-    return str(angle, throttle)
+    return str(angle)+","+str(throttle)
