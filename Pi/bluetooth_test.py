@@ -2,7 +2,7 @@ from gpiozero import Servo
 from enum import Enum
 import pygame
 import threading
-from gpiozero.pins.pigpio import PiGPIOFactory
+# from gpiozero.pins.pigpio import PiGPIOFactory
 from time import sleep
 
 # initialize pygame for services like joystick detection
@@ -28,8 +28,8 @@ angle = 0
 throttle = 0
 
 # initialize servo objects on gpio 11, 12
-SteeringServo = Servo(17, initial_value = 0, min_pulse_width=1/1000, max_pulse_width=2/1000, pin_factory=PiGPIOFactory('127.0.0.1')) 
-DrivingServo = Servo(19, initial_value = 0,  min_pulse_width=1/1000, max_pulse_width=2/1000, pin_factory=PiGPIOFactory('127.0.0.1'))
+SteeringServo = Servo(17, initial_value = 0, min_pulse_width=1/1000, max_pulse_width=2/1000) 
+DrivingServo = Servo(19, initial_value = 0,  min_pulse_width=1/1000, max_pulse_width=2/1000)
 
 sleep(5)
 
