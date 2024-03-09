@@ -6,7 +6,7 @@ import tarfile
 import gzip
 
 # replace with your API url and Bearer Token
-bearer_token = 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lm'
+bearer_token = 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lmMmVZSUxUblpZPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206bmV3c19sZXR0ZXIiOiIxIiwiY3VzdG9tOmNvdW50cnkiOiJVbml0ZWQgU3RhdGVzIiwic3ViIjoiNDlmMzdjODQtZDM1NC00NTczLTliOTEtNGFmNDY5YWM1MzU2IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX0c1NWVQenVzcCIsImNvZ25pdG86dXNlcm5hbWUiOiI0OWYzN2M4NC1kMzU0LTQ1NzMtOWI5MS00YWY0NjlhYzUzNTYiLCJnaXZlbl9uYW1lIjoiSm9uYXRoYW4iLCJjdXN0b206Y29tcGFueSI6IlVDIFNhbnRhIENydXoiLCJhdWQiOiI3ZnE1anZzNWZmczFjNTBoZDN0b29iYjNiOSIsImV2ZW50X2lkIjoiMDMwMDc1N2MtMDY5NC00MjU4LThlMzEtNDE4ZTNmMzAyNzY3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTAwMDA5MTYsImV4cCI6MTcxMDAwNDUxNiwiaWF0IjoxNzEwMDAwOTE2LCJmYW1pbHlfbmFtZSI6Ik1vcnJpcyIsImVtYWlsIjoiam93ZW1vcnJAdWNzYy5lZHUifQ.n9DEn_Vkoj7UKJgTKUagSgLRLBqxdWQ-OlLJIZHogmQpIhR4uEpZnGz4eEPiXGcXg82xUa6Jz0puYuU1X4wxJgxUdqAZY4AOJCBYgLGQx231G1mZ1h11JCIxuA55_-iybbr31cS4PD4S7tclMYYEl67wE3mOIpL_6kZWQZJHiGNooYEx7OSYJ5eMzJAcY1cKpmuaFHIN2cIIvZEJwZOhrHLVTqZLyNXYe0Wuc7d0vXysnwbxXaa2Jx3qsbJHuV3XOjK4QvhYpCwf9x9Hh-OTcuy57sxL1ITg1ilCU8jmY2Smlw9RRmr8dNMUoZmfbSQ_m2m37twLcL5RMNyDrdzhHw'
 
 output_dir = "/path/to/save"
 region = 'asia' # 'us' or 'asia'
@@ -121,8 +121,8 @@ def extract_tar_to_original_folder(tar_file_path):
         tar.extractall(original_folder)
 
 def main():
-    token = login("jowemorr@ucsc.edu", "dyGzuh-9betby-mihwum")
-    bearer_token = token
+    # token = login("jowemorr@ucsc.edu", "dyGzuh-9betby-mihwum")
+    # bearer_token = token
 
     print("Getting download urls...")
 
