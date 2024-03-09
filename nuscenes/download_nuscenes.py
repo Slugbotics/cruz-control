@@ -145,7 +145,7 @@ def main():
 
     os.makedirs(output_dir,exist_ok=True)
     for output_name,(download_url,save_file,md5) in download_data.items():
-        save_file = download_file(download_url,save_file,md5)
+        # save_file = download_file(download_url,save_file,md5)
         download_data[output_name] = [download_url,save_file,md5]
 
     print("Extracting files...")
