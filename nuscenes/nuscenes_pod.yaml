@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: jonathan-nuscenes-pod-unzip
+  name: jonathan-nuscenes-pod
 spec:
   containers:
   - name: mypod
