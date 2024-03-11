@@ -6,13 +6,14 @@ import tarfile
 import gzip
 
 # replace with your API url and Bearer Token
-bearer_token = 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lmMmVZSUxUblpZPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206bmV3c19sZXR0ZXIiOiIxIiwiY3VzdG9tOmNvdW50cnkiOiJVbml0ZWQgU3RhdGVzIiwic3ViIjoiNDlmMzdjODQtZDM1NC00NTczLTliOTEtNGFmNDY5YWM1MzU2IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX0c1NWVQenVzcCIsImNvZ25pdG86dXNlcm5hbWUiOiI0OWYzN2M4NC1kMzU0LTQ1NzMtOWI5MS00YWY0NjlhYzUzNTYiLCJnaXZlbl9uYW1lIjoiSm9uYXRoYW4iLCJjdXN0b206Y29tcGFueSI6IlVDIFNhbnRhIENydXoiLCJhdWQiOiI3ZnE1anZzNWZmczFjNTBoZDN0b29iYjNiOSIsImV2ZW50X2lkIjoiMjZmZDdmMmMtM2RiNS00MDg1LTk0NTAtMDE2YWU1MWJiYzliIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTAxMjMxNTksImV4cCI6MTcxMDEyNjc1OSwiaWF0IjoxNzEwMTIzMTU5LCJmYW1pbHlfbmFtZSI6Ik1vcnJpcyIsImVtYWlsIjoiam93ZW1vcnJAdWNzYy5lZHUifQ.YBxESudGcJwe5EMbIWze0akkGQCwDw6A8EigEJ08LbC-slMZU_XFpMmfv8kxTtTzZGFaiWqMOgGQan0kT6frrOZMmcGgVu60dAEWIo6Ryc7k18TH-eB5k1aZYbVkTZo8WygsyMmgARqMlQp2bBI0kwTwXDLaCexWKKFZ5KABNdkdrWGMA0gXIwB-S6NITIWVIWJweB0l7GkOi3LeqHL0QnAU-O57sOy25ki6kut9L0dxGBumI0SZYPu1wS9BRxMoUq5XwfRUlXtP8KjsNFSMdzu80NcpVNOUS5jrEKQMM3H8syD1rywak41gT_TrXqxXdtuUjWQLJQlfX0jcQNm2Ig'
+bearer_token = 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lmMmVZSUxUblpZPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206bmV3c19sZXR0ZXIiOiIxIiwiY3VzdG9tOmNvdW50cnkiOiJVbml0ZWQgU3RhdGVzIiwic3ViIjoiNDlmMzdjODQtZDM1NC00NTczLTliOTEtNGFmNDY5YWM1MzU2IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX0c1NWVQenVzcCIsImNvZ25pdG86dXNlcm5hbWUiOiI0OWYzN2M4NC1kMzU0LTQ1NzMtOWI5MS00YWY0NjlhYzUzNTYiLCJnaXZlbl9uYW1lIjoiSm9uYXRoYW4iLCJjdXN0b206Y29tcGFueSI6IlVDIFNhbnRhIENydXoiLCJhdWQiOiI3ZnE1anZzNWZmczFjNTBoZDN0b29iYjNiOSIsImV2ZW50X2lkIjoiOGFmZDM3NTEtYTY4ZC00ZDBlLWI1YjEtYzhkY2FjZjk1NzdlIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTAxMjg2NTUsImV4cCI6MTcxMDEzMjI1NSwiaWF0IjoxNzEwMTI4NjU1LCJmYW1pbHlfbmFtZSI6Ik1vcnJpcyIsImVtYWlsIjoiam93ZW1vcnJAdWNzYy5lZHUifQ.klIzjitbVWRVabdI3eDG82MI43DW8pPuAXKQpQgBs2xq4PcvN9GIeSGhTiPqTOp5o8Bg7IAqOiOfdotanIyO0KkW44ESepAYGWaJUzRvJCXNrfpCHZP5WX8KMpqvxbjmljRYnYKBdc4HwY5vH4W5edQqDYoC20LUACMO5564fIqb0-F2IzXsq2S88I3Fi54rBO-gNR5nI4lV-uU3EAELFTEJxfJsyH4MQ3sx_p1Z3dRQYifcOMmp0NLqmzhMJB6hQ0nx8wcuvZ8d6N5XMZZpn1BDFfcOEIlrGtUd4HubRG_5a6aFrve-9ISri0LTY19ItzPUeDRi3-yYiBIWpNfy5w'
 
 output_dir = "/pvcvolume/nuscenes"
 region = 'us' # 'us' or 'asia'
 
 
 download_files = {
+    "can_bus.zip":"d41d8cd98f00b204e9800998ecf8427e",
     "v1.0-trainval_meta.tgz":"3eee698806fcf52330faa2e682b9f3a1",
     "v1.0-trainval01_blobs.tgz":"8b5eaecef969aea173a5317be153ca63",
     "v1.0-trainval02_blobs.tgz":"116085f49ec4c60958f9d49b2bd6bfdd",
@@ -61,26 +62,13 @@ def login(username, password):
 
 def download_file(url, save_file,md5):
     response = requests.get(url, stream=True)
+
     if save_file.endswith(".tgz"):
         content_type = response.headers.get('Content-Type', '')
         if content_type == 'application/x-tar':
             save_file = save_file.replace('.tgz', '.tar')
         elif content_type != 'application/octet-stream':
             print("unknow content type",content_type)
-            return save_file
-
-    if os.path.exists(save_file):
-        print(save_file,"has downloaded")
-        # check md5
-        md5obj = hashlib.md5()
-        with open(save_file, 'rb') as file:
-            for chunk in file:
-                md5obj.update(chunk)
-        hash = md5obj.hexdigest()
-        if hash != md5:
-            print(save_file,"check md5 failed,download again")
-        else:
-            print(save_file,"check md5 success")
             return save_file
         
     file_size = int(response.headers.get('Content-Length', 0))
