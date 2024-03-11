@@ -7,11 +7,11 @@ spec:
     spec:
       containers:
       - name: demo
-        image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp:latest
+        image: python
         command:
         - sh
         - -c
-        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git && git pull && python download_nuscenes.py"
+        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git && git pull && pip3 install requests && pip3 install tqdm && python3 download_nuscenes.py"
         volumeMounts:
         - name: pvcvolume
           mountPath: /pvcvolume
@@ -27,4 +27,4 @@ spec:
         persistentVolumeClaim:
           claimName: jonathan-nuscenes
       restartPolicy: Never
-  backoffLimit: 5
+  backoffLimit: 2
