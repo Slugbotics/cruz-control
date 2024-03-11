@@ -8,6 +8,7 @@ from PIL import Image
 import torch.nn.functional as F
 from nuscenes.can_bus.can_bus_api import NuScenesCanBus
 from nuscenes.nuscenes import NuScenes
+from pathlib import Path
 
 PATH = '/pvcvolume/nuscenes'
 
@@ -83,14 +84,16 @@ batch_size = 64
 epochs = 10
 model_path = os.path.join(os.getcwd(), "models")
 
-mode = 0o666
-os.mkdir(model_path, mode)
+path = Path(model_path)
+
+if not path.exists():
+    os.mkdir(model_path)
 
 def train():
     # path = sys.argv[1]
     print("final model weights will be saved to: " + model_path)
 
-    device = torch.device("cuda")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     transform = transforms.Compose(
         [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
@@ -171,7 +174,7 @@ def train():
         # Validation
         net.eval()
         with torch.no_grad():
-            for scene in trainloader:
+            for scene in valloader:
                 for scene in scenes:
                     first_sample_token = scene['first_sample_token']
 
@@ -222,4 +225,5 @@ def train():
     print("Finished training")
     torch.save(net.state_dict(), os.path.join(model_path, f"model_final.pth"))
 
-train()
+if __name__ == '__main__':
+    train()
