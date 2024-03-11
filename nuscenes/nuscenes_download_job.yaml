@@ -11,14 +11,14 @@ spec:
         command:
         - sh
         - -c
-        - "cd /pvcvolume && python download_nuscenes.py"
+        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git && git pull && python download_nuscenes.py"
         volumeMounts:
         - name: pvcvolume
           mountPath: /pvcvolume
         resources:
           limits:
             memory: 16Gi
-            cpu: "4"
+            cpu: "5"
           requests:
             memory: 8Gi
             cpu: "2"
