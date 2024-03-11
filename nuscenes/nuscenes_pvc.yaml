@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jonathan-nuscenes-seaweed
+  name: jonathan-nuscenes
 spec:
-  storageClassName: seaweedfs-storage-nvme
+  storageClassName: rook-cephfs-haosu
   accessModes:
   - ReadWriteMany
   resources:

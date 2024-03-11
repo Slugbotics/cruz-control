@@ -6,7 +6,7 @@ spec:
   containers:
   - name: vol-container
     image: ubuntu
-    command: ["sh", "-c", "apt-get update && apt-get --assume-yes install git && sleep infinity"]
+    command: ["sh", "-c", "apt-get update && apt-get --assume-yes install git && cd /pvcvolume && git clone https://github.com/Slugbotics/cruz-control && sleep infinity"]
     resources:
       limits:
         memory: 1.5Gi
@@ -16,9 +16,9 @@ spec:
         cpu: "2"
     volumeMounts:
     - mountPath: /pvcvolume
-      name: jonathan-nuscenes-seaweed
+      name: jonathan-nuscenes
   restartPolicy: Never
   volumes:
-  - name: jonathan-nuscenes-seaweed
+  - name: jonathan-nuscenes
     persistentVolumeClaim:
-      claimName: jonathan-nuscenes-seaweed
+      claimName: jonathan-nuscenes

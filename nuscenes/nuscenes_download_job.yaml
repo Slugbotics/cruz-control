@@ -25,6 +25,6 @@ spec:
       volumes:
       - name: pvcvolume
         persistentVolumeClaim:
-          claimName: jonathan-nuscenes-seaweed
+          claimName: jonathan-nuscenes
       restartPolicy: Never
   backoffLimit: 2
