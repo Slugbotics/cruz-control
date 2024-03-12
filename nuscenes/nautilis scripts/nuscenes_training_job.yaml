@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jonathan-nuscenes-training-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: jonathan-nuscenes-training-job
+        image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/tensorflow
+        command: ["sh", "-c"]
+        args:
+        - |
+          pip3 install torch torchvision torchaudio nuscenes-devkit
+          cd /pvcvolume/cruz-control/nuscenes
+          git pull
+          python3 nuscenes_run.py '/pvcvolume/nuscenes/'
+
+        volumeMounts:
+        - name: pvcvolume
+          mountPath: /pvcvolume
+        resources:
+          limits:
+            memory: 64Gi
+            cpu: "12"
+            nvidia.com/gpu: "1"
+          requests:
+            memory: 10Gi
+            cpu: "2"
+            nvidia.com/gpu: "1"
+      volumes:
+      - name: pvcvolume
+        persistentVolumeClaim:
+          claimName: jonathan-nuscenes
+      restartPolicy: Never
+  backoffLimit: 1

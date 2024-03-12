@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nuscenes-training-pod
+  name: jonathan-nuscenes-training-pod
 spec:
   containers:
-  - name: nuscenes-training-pod
+  - name: jonathan-nuscenes-training-pod
     image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/tensorflow
     command: ["sh", "-c", "git clone https://github.com/Slugbotics/cruz-control && pip3 install torch torchvision torchaudio nuscenes-devkit && jupyter notebook --ip='0.0.0.0'"]
     resources:
