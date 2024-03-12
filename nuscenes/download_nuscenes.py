@@ -108,6 +108,13 @@ def extract_tar_to_original_folder(tar_file_path):
     with tarfile.open(tar_file_path, 'r') as tar:
         tar.extractall(original_folder)
 
+def extract_zip_to_original_folder(zip_file_path):
+    original_folder = os.path.dirname(zip_file_path)
+    print(f"Extracting {zip_file_path} to {original_folder}")
+
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(original_folder)
+
 def main():
     # token = login("jowemorr@ucsc.edu", "dyGzuh-9betby-mihwum")
     # bearer_token = token
@@ -142,6 +149,8 @@ def main():
             extract_tgz_to_original_folder(save_file)
         elif output_name.endswith(".tar"):
             extract_tar_to_original_folder(save_file)
+        elif output_name.endswith(".zip"):
+            extract_zip_to_original_folder(save_file)
         else:
             print("unknow file type",output_name)
 
