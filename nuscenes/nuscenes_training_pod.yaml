@@ -6,14 +6,14 @@ spec:
   containers:
   - name: nuscenes-training-pod
     image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/tensorflow
-    command: ["sh", "-c", "git clone https://github.com/Slugbotics/cruz-control && jupyter notebook --ip='0.0.0.0'"]
+    command: ["sh", "-c", "git clone https://github.com/Slugbotics/cruz-control && pip3 install torch torchvision torchaudio nuscenes-devkit && jupyter notebook --ip='0.0.0.0'"]
     resources:
       limits:
-        memory: 16Gi
-        cpu: "4"
+        memory: 32Gi
+        cpu: "10"
         nvidia.com/gpu: "1"
       requests:
-        memory: 16Gi
+        memory: 10Gi
         cpu: "2"
         nvidia.com/gpu: "1"
     volumeMounts:
