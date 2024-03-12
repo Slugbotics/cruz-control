@@ -6,12 +6,12 @@ spec:
   template:
     spec:
       containers:
-      - name: demo
+      - name: jonathan-download-nuscenes
         image: ubuntu
         command:
         - sh
         - -c
-        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git python3 python3-pip && git pull && pip3 install requests && pip3 install tqdm && python3 download_nuscenes.py"
+        - "apt-get update && apt-get --assume-yes install git && cd /pvcvolume && git clone https://github.com/Slugbotics/cruz-control"
         volumeMounts:
         - name: pvcvolume
           mountPath: /pvcvolume
@@ -28,3 +28,4 @@ spec:
           claimName: jonathan-nuscenes
       restartPolicy: Never
   backoffLimit: 2
+
