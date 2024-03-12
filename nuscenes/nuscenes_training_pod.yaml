@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nuscenes-training-pod
+spec:
+  containers:
+  - name: nuscenes-training-pod
+    image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/tensorflow
+    command: ["sh", "-c", "git clone https://github.com/Slugbotics/cruz-control && jupyter notebook --ip='0.0.0.0'"]
+    resources:
+      limits:
+        memory: 16Gi
+        cpu: "4"
+        nvidia.com/gpu: "1"
+      requests:
+        memory: 16Gi
+        cpu: "2"
+        nvidia.com/gpu: "1"
+    volumeMounts:
+    - mountPath: /pvcvolume
+      name: jonathan-nuscenes
+  restartPolicy: Never
+  volumes:
+  - name: jonathan-nuscenes
+    persistentVolumeClaim:
+      claimName: jonathan-nuscenes
+
