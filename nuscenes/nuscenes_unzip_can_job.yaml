@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jonathan-unzip-can
+spec:
+  template:
+    spec:
+      containers:
+      - name: jonathan-unzip-can
+        image: ubuntu
+        command:
+        - sh
+        - -c
+        - "cd /pvcvolume/nuscenes && apt-get update && apt-get --assume-yes install unzip && unzip -o can_bus.zip"
+        volumeMounts:
+        - name: pvcvolume
+          mountPath: /pvcvolume
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+          requests:
+            memory: 1Gi
+            cpu: "1"
+      volumes:
+      - name: pvcvolume
+        persistentVolumeClaim:
+          claimName: jonathan-nuscenes
+      restartPolicy: Never
+  backoffLimit: 2

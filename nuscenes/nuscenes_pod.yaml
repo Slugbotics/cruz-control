@@ -6,7 +6,7 @@ spec:
   containers:
   - name: vol-container
     image: ubuntu
-    command: ["sh", "-c", "sleep infinity"]
+    command: ["sh", "-c", "apt-get update && sleep infinity"]
     resources:
       limits:
         memory: 100Mi
