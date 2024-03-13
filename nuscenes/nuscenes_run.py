@@ -140,6 +140,8 @@ def train():
             for scene in scenes:
                 scene_number = int(scene['name'].split("-")[1])
 
+                print(f"Working on {scene_number}")
+
                 if scene_number in nusc_can.can_blacklist:
                     print("Skipping scene " + str(scene_number))
                     continue
