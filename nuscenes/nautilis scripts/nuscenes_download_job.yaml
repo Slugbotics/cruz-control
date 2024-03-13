@@ -17,8 +17,8 @@ spec:
           mountPath: /pvcvolume
         resources:
           limits:
-            memory: 1Gi
-            cpu: "1"
+            memory: 5Gi
+            cpu: "3"
           requests:
             memory: 1Gi
             cpu: "1"
