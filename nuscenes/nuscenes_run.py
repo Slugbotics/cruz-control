@@ -16,7 +16,7 @@ if len(sys.argv) < 2:
 
 PATH = sys.argv[1]
 
-nusc = NuScenes(version="v1.0-mini", dataroot=PATH, verbose=False)
+nusc = NuScenes(version="v1.0-trainval", dataroot=PATH, verbose=False)
 nusc_can = NuScenesCanBus(dataroot=PATH)
 
 
