@@ -110,8 +110,8 @@ def train():
     # path = sys.argv[1]
     print("final model weights will be saved to: " + model_path)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    device = torch.device("mps")
+    
     transform = transforms.Compose(
         [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
     )
@@ -138,42 +138,38 @@ def train():
         net.train()
         for scene in trainloader:
             for scene in scenes:
-                first_sample_token = scene["first_sample_token"]
-
-                current_sample = nusc.get("sample", first_sample_token)
-                scene_cans = nusc_can.get_messages(scene["name"], "zoesensors")
-
-                scene_number = int(scene["name"].split("-")[1])
+                scene_number = int(scene['name'].split("-")[1])
 
                 if scene_number in nusc_can.can_blacklist:
                     print("Skipping scene " + str(scene_number))
                     continue
+                
+                first_sample_token = scene['first_sample_token']
+
+                current_sample = nusc.get('sample', first_sample_token)
+                scene_cans = nusc_can.get_messages(scene['name'], 'zoesensors')
 
                 while True:
                     sensor = "CAM_FRONT"
-                    cam_front_data = nusc.get(
-                        "sample_data", current_sample["data"][sensor]
-                    )
+                    cam_front_data = nusc.get("sample_data", current_sample["data"][sensor])
                     current_image_path = PATH + "/" + cam_front_data["filename"]
                     img = Image.open(current_image_path)
 
                     inputs = transform(img).to(device)
-
-                    current_can = get_closest_can(
-                        current_sample["timestamp"], scene_cans
-                    )
+                    
+                    current_can = get_closest_can(current_sample["timestamp"], scene_cans)
 
                     normal_can = normalize_can(current_can)
 
-                    steering_targets = normal_can["steering_sensor"]
-                    throttle_targets = normal_can["throttle_sensor"]
-                    breaking_targets = normal_can["brake_sensor"]
+                    steering_targets = normal_can['steering_sensor']
+                    throttle_targets = normal_can['throttle_sensor']
+                    breaking_targets = normal_can['brake_sensor']
 
-                    label = torch.FloatTensor(
-                        [steering_targets, throttle_targets, breaking_targets]
-                    ).to(device)
+
+                    label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
 
                     optimizer.zero_grad()
+                    
 
                     # Forward pass
                     outputs = net(inputs)
@@ -187,59 +183,53 @@ def train():
                     # Update weights
                     optimizer.step()
 
-                    if current_sample["next"] == "":
+                    if current_sample['next'] == '':
                         break
                     else:
-                        current_sample = nusc.get("sample", current_sample["next"])
+                        current_sample = nusc.get('sample', current_sample['next'])
 
         # Validation
         net.eval()
         with torch.no_grad():
             for scene in valloader:
                 for scene in scenes:
-                    first_sample_token = scene["first_sample_token"]
-
-                    current_sample = nusc.get("sample", first_sample_token)
-                    scene_cans = nusc_can.get_messages(scene["name"], "zoesensors")
-
-                    scene_number = int(scene["name"].split("-")[1])
+                    scene_number = int(scene['name'].split("-")[1])
 
                     if scene_number in nusc_can.can_blacklist:
                         print("Skipping scene " + str(scene_number))
                         continue
 
+                    first_sample_token = scene['first_sample_token']
+
+                    current_sample = nusc.get('sample', first_sample_token)
+                    scene_cans = nusc_can.get_messages(scene['name'], 'zoesensors')
+
                     while True:
                         sensor = "CAM_FRONT"
-                        cam_front_data = nusc.get(
-                            "sample_data", current_sample["data"][sensor]
-                        )
+                        cam_front_data = nusc.get("sample_data", current_sample["data"][sensor])
                         current_image_path = PATH + "/" + cam_front_data["filename"]
                         img = Image.open(current_image_path)
 
                         inputs = transform(img).to(device)
 
-                        current_can = get_closest_can(
-                            current_sample["timestamp"], scene_cans
-                        )
-
+                        current_can = get_closest_can(current_sample["timestamp"], scene_cans)
+                        
                         normal_can = normalize_can(current_can)
 
-                        steering_targets = normal_can["steering_sensor"]
-                        throttle_targets = normal_can["throttle_sensor"]
-                        breaking_targets = normal_can["brake_sensor"]
+                        steering_targets = normal_can['steering_sensor']
+                        throttle_targets = normal_can['throttle_sensor']
+                        breaking_targets = normal_can['brake_sensor']
 
-                        label = torch.FloatTensor(
-                            [steering_targets, throttle_targets, breaking_targets]
-                        ).to(device)
+                        label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
 
                         outputs = net(inputs)
 
                         val_total_loss = criterion(outputs, label)
 
-                        if current_sample["next"] == "":
+                        if current_sample['next'] == '':
                             break
                         else:
-                            current_sample = nusc.get("sample", current_sample["next"])
+                            current_sample = nusc.get('sample', current_sample['next'])
 
         print(
             f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss.item():.4f}, Validation Loss: {val_total_loss.item():.4f}"
