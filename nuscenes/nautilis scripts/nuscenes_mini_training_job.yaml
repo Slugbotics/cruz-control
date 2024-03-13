@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jonathan-nuscenes-training-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: jonathan-nuscenes-training-job
+        image: ubuntu
+        imagePullPolicy: Always
+        command: ["sh", "-c"]
+        args:
+        - |
+          apt-get update
+          apt-get --assume-yes install git python3 python3-pip ffmpeg libsm6 libxext6
+          pip3 install torch torchvision torchaudio nuscenes-devkit opencv-python
+          cd /pvcvolume/cruz-control/nuscenes
+          git config --global --add safe.directory /pvcvolume/cruz-control
+          git pull
+          mkdir /pvcvolume/nuscenes/models
+          python3 nuscenes_run.py '/pvcvolume/nuscenes' 'v1.0-mini'
+
+        volumeMounts:
+        - name: pvcvolume
+          mountPath: /pvcvolume
+        resources:
+          limits:
+            memory: 64Gi
+            cpu: "12"
+            nvidia.com/gpu: "1"
+          requests:
+            memory: 10Gi
+            cpu: "2"
+            nvidia.com/gpu: "1"
+      volumes:
+      - name: pvcvolume
+        persistentVolumeClaim:
+          claimName: jonathan-nuscenes
+      restartPolicy: Never
+  backoffLimit: 1

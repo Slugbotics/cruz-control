@@ -14,9 +14,12 @@ from pathlib import Path
 if len(sys.argv) < 2:
     raise Exception('ERROR, PROVIDE PATH TO MODEL')
 
+if len(sys.argv) < 3:
+    raise Exception('ERROR, PROVIDE version type')
+
 PATH = sys.argv[1]
 
-nusc = NuScenes(version="v1.0-trainval", dataroot=PATH, verbose=False)
+nusc = NuScenes(version=sys.argv[2], dataroot=PATH, verbose=False)
 nusc_can = NuScenesCanBus(dataroot=PATH)
 
 
@@ -110,7 +113,7 @@ def train():
     # path = sys.argv[1]
     print("final model weights will be saved to: " + model_path)
 
-    device = torch.device("cuda")
+    device = torch.device("mps")
     
     transform = transforms.Compose(
         [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]

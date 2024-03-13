@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jonathan-nuscenes-mini-unzip-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: jonathan-nuscenes-mini-unzip-job
+        image: ubuntu
+        imagePullPolicy: Always
+        command: ["sh", "-c"]
+        args:
+        - |
+          cd /pvcvolume/nuscenes
+          echo "Starting"
+          tar -xf v1.0-mini.tgz
+
+        volumeMounts:
+        - name: pvcvolume
+          mountPath: /pvcvolume
+        resources:
+          limits:
+            memory: 64Gi
+            cpu: "12"
+          requests:
+            memory: 500Mi
+            cpu: "100m"
+      volumes:
+      - name: pvcvolume
+        persistentVolumeClaim:
+          claimName: jonathan-nuscenes
+      restartPolicy: Never
+  backoffLimit: 1

@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: jonathan-download-nuscenes
+  name: jonathan-github-setup
 spec:
   template:
     spec:
       containers:
-      - name: jonathan-download-nuscenes
+      - name: jonathan-github-setup
         image: ubuntu
         command:
         - sh
@@ -25,7 +25,7 @@ spec:
       volumes:
       - name: pvcvolume
         persistentVolumeClaim:
-          claimName: jonathan-nuscenes
+          claimName: jonathan-nuscenes-block
       restartPolicy: Never
-  backoffLimit: 2
+  backoffLimit: 1
 
