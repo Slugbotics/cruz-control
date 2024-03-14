@@ -18,8 +18,7 @@ spec:
           cd /pvcvolume/cruz-control/nuscenes
           git config --global --add safe.directory /pvcvolume/cruz-control
           git pull
-          mkdir /pvcvolume/nuscenes/models
-          python3 nuscenes_run.py '/pvcvolume/nuscenes' 'v1.0-mini'
+          python3 nuscenes_run.py '/pvcvolume/nuscenes' 'v1.0-trainval'
 
         volumeMounts:
         - name: pvcvolume
