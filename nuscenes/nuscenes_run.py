@@ -158,9 +158,7 @@ def train():
 
                     img_input = transform(img).to(device)
                 
-                    current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)
-
-                    print(current_vehicle_can)                    
+                    current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)               
 
                     if current_vehicle_can == {}:
                         if current_sample['next'] == '':
