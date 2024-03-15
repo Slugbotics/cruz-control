@@ -21,4 +21,4 @@ spec:
   volumes:
   - name: jonathan-nuscenes
     persistentVolumeClaim:
-      claimName: jonathan-nuscenes-block
+      claimName: jonathan-nuscenes

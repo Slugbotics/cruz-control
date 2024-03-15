@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jonathan-nuscenes-block
+  name: jonathan-nuscenes
 spec:
-  storageClassName: rook-ceph-block
+  storageClassName: rook-cephfs-haosu
   accessModes:
   - ReadWriteOnce
   resources:
