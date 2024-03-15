@@ -25,41 +25,37 @@ nusc_can = NuScenesCanBus(dataroot=PATH)
 
 def get_closest_can(time, can_objects):
     closest = {}
-    prev_diff = 1000000000000000000000000
+    prev_diff = 1000000 # 1 Second in microseconds
     for object in can_objects:
         diff = object["utime"] - time
         if diff > 0 and diff < prev_diff:
             closest = object
             prev_diff = diff
+    # print("Time difference: ", prev_diff)
     return closest
 
+def normalize(value, min, max):
+    # Figure out how 'wide' each range is
+    leftSpan = max - min
 
-def normalize_can(can_obj):
-    new_obj = can_obj
+    # Convert the left range into a 0-1 range (float)
+    return float(value - min) / float(leftSpan)
 
-    # These values are from here: https://github.com/nutonomy/nuscenes-devkit/blob/master/python-sdk/nuscenes/can_bus/README.md#zoe-sensors
-    min_breaking = 0.166
-    max_breaking = 0.631
-    min_steering = 0.176
-    max_steering = 0.252
-    min_throttle = 0.105
-    max_throttle = 0.411
+def normalize_vehicle_monitor_can(can_obj):
+    new_obj = {}
 
-    # convert values from 0-1
-    new_obj["brake_sensor"] = (can_obj["brake_sensor"] - min_breaking) / (
-        max_breaking - min_breaking
-    )
-    new_obj["steering_sensor"] = (can_obj["steering_sensor"] - min_steering) / (
-        max_steering - min_steering
-    )
-    new_obj["throttle_sensor"] = (can_obj["throttle_sensor"] - min_throttle) / (
-        max_throttle - min_throttle
-    )
+    min_brake = 0
+    max_break = 126
 
-    # reduce precision
-    new_obj["brake_sensor"] = round(can_obj["brake_sensor"], 2)
-    new_obj["steering_sensor"] = round(can_obj["steering_sensor"], 2)
-    new_obj["throttle_sensor"] = round(can_obj["throttle_sensor"], 2)
+    min_steering = -780
+    max_steering = 779.9
+
+    min_throttle = 0
+    max_throttle = 1000
+
+    new_obj["brake"] = normalize(can_obj["brake"], min_brake, max_break)
+    new_obj["steering"] = normalize(can_obj["steering"], min_steering, max_steering)
+    new_obj["throttle"] = normalize(can_obj["throttle"], min_throttle, max_throttle)
 
     return new_obj
 
@@ -111,9 +107,10 @@ if not path.exists():
 
 def train():
     # path = sys.argv[1]
+    print("Model Version V1.1")
     print("final model weights will be saved to: " + model_path)
 
-    device = torch.device("cuda")
+    device = torch.device("mps")
     
     transform = transforms.Compose(
         [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
@@ -143,8 +140,6 @@ def train():
             for scene in scenes:
                 scene_number = int(scene['name'].split("-")[1])
 
-                print(f"Working on {scene_number}")
-
                 if scene_number in nusc_can.can_blacklist:
                     print("Skipping scene " + str(scene_number))
                     continue
@@ -152,7 +147,8 @@ def train():
                 first_sample_token = scene['first_sample_token']
 
                 current_sample = nusc.get('sample', first_sample_token)
-                scene_cans = nusc_can.get_messages(scene['name'], 'zoesensors')
+
+                scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
 
                 while True:
                     sensor = "CAM_FRONT"
@@ -160,24 +156,28 @@ def train():
                     current_image_path = PATH + "/" + cam_front_data["filename"]
                     img = Image.open(current_image_path)
 
-                    inputs = transform(img).to(device)
-                    
-                    current_can = get_closest_can(current_sample["timestamp"], scene_cans)
+                    img_input = transform(img).to(device)
+                
+                    current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)                    
 
-                    normal_can = normalize_can(current_can)
+                    if current_vehicle_can == {}:
+                        if current_sample['next'] == '':
+                            break
+                        else:
+                            current_sample = nusc.get('sample', current_sample['next'])
 
-                    steering_targets = normal_can['steering_sensor']
-                    throttle_targets = normal_can['throttle_sensor']
-                    breaking_targets = normal_can['brake_sensor']
+                    normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
+                    steering_targets = normal_vm_can['steering']
+                    throttle_targets = normal_vm_can['throttle']
+                    breaking_targets = normal_vm_can['brake']
 
-                    label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
+                    label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)              
 
                     optimizer.zero_grad()
                     
-
                     # Forward pass
-                    outputs = net(inputs)
+                    outputs = net(img_input)
 
                     # Compute loss
                     total_loss = criterion(outputs, label)
@@ -207,7 +207,9 @@ def train():
                     first_sample_token = scene['first_sample_token']
 
                     current_sample = nusc.get('sample', first_sample_token)
-                    scene_cans = nusc_can.get_messages(scene['name'], 'zoesensors')
+
+                    scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
+                    scene_imu_cans = nusc_can.get_messages(scene['name'], 'ms_imu')
 
                     while True:
                         sensor = "CAM_FRONT"
@@ -215,19 +217,25 @@ def train():
                         current_image_path = PATH + "/" + cam_front_data["filename"]
                         img = Image.open(current_image_path)
 
-                        inputs = transform(img).to(device)
+                        img_input = transform(img).to(device)
 
-                        current_can = get_closest_can(current_sample["timestamp"], scene_cans)
+                        current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)
+
+                        if current_vehicle_can == {}:
+                            if current_sample['next'] == '':
+                                break
+                            else:
+                                current_sample = nusc.get('sample', current_sample['next'])
                         
-                        normal_can = normalize_can(current_can)
+                        normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
-                        steering_targets = normal_can['steering_sensor']
-                        throttle_targets = normal_can['throttle_sensor']
-                        breaking_targets = normal_can['brake_sensor']
+                        steering_targets = normal_vm_can['steering']
+                        throttle_targets = normal_vm_can['throttle']
+                        breaking_targets = normal_vm_can['brake']
 
                         label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
 
-                        outputs = net(inputs)
+                        outputs = net(img_input)
 
                         val_total_loss = criterion(outputs, label)
 
