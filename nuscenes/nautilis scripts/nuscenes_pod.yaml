@@ -9,8 +9,8 @@ spec:
     command: ["sh", "-c", "apt-get update && sleep infinity"]
     resources:
       limits:
-        memory: 100Mi
-        cpu: 100m
+        memory: 2Gi
+        cpu: "1"
       requests:
         memory: 100Mi
         cpu: 100m
@@ -21,4 +21,4 @@ spec:
   volumes:
   - name: jonathan-nuscenes
     persistentVolumeClaim:
-      claimName: jonathan-nuscenes
+      claimName: jonathan-nuscenes-block
