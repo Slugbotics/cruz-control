@@ -110,7 +110,7 @@ def train():
     print("Model Version V1.1")
     print("final model weights will be saved to: " + model_path)
 
-    device = torch.device("mps")
+    device = torch.device("cuda")
     
     transform = transforms.Compose(
         [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
