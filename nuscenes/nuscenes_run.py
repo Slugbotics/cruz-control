@@ -167,6 +167,7 @@ def train():
                             break
                         else:
                             current_sample = nusc.get('sample', current_sample['next'])
+                            continue
 
                     normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
@@ -228,6 +229,7 @@ def train():
                                 break
                             else:
                                 current_sample = nusc.get('sample', current_sample['next'])
+                                continue
                         
                         normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
