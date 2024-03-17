@@ -21,8 +21,9 @@ if len(sys.argv) < 3:
     raise Exception('ERROR, PROVIDE version type')
 
 PATH = sys.argv[1]
+VERSION = sys.argv[2]
 
-nusc = NuScenes(version=sys.argv[2], dataroot=PATH, verbose=False)
+nusc = NuScenes(version=VERSION, dataroot=PATH, verbose=False)
 nusc_can = NuScenesCanBus(dataroot=PATH)
 
 
@@ -192,9 +193,11 @@ def train():
                     optimizer.step()
 
                     if current_sample['next'] == '':
+                        print("Finished scene " + str(scene_number))
                         break
                     else:
                         current_sample = nusc.get('sample', current_sample['next'])
+                        print("Next sample: " + str(current_sample['next']))
 
         # Validation
         net.eval()
