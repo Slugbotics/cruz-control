@@ -113,6 +113,7 @@ while(True):
     tensor = torch.from_numpy(img).to(device)
     # Our operations on the frame come here
     prediction = model(tensor)
+    print(prediction)
     control.steer = prediction[0].item()
     control.throttle = prediction[1].item()
     control.brake = prediction[2].item()   # This line currently makes the vehicle unable to move

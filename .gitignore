@@ -7,3 +7,4 @@ VisionML/models/
 
 models/
 *.avi
+*.pth
