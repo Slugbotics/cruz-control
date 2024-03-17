@@ -11,6 +11,9 @@ from nuscenes.can_bus.can_bus_api import NuScenesCanBus
 from nuscenes.nuscenes import NuScenes
 from pathlib import Path
 
+# Usage Example:
+# python3 nuscenes_run.py /path/to/nuscenes/v1.0-mini v1.0-mini
+
 if len(sys.argv) < 2:
     raise Exception('ERROR, PROVIDE PATH TO MODEL')
 
@@ -143,6 +146,8 @@ def train():
                 if scene_number in nusc_can.can_blacklist:
                     print("Skipping scene " + str(scene_number))
                     continue
+                    
+                print("Scene: " + str(scene_number))
                 
                 first_sample_token = scene['first_sample_token']
 
@@ -161,11 +166,8 @@ def train():
                     current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)               
 
                     if current_vehicle_can == {}:
-                        if current_sample['next'] == '':
-                            break
-                        else:
-                            current_sample = nusc.get('sample', current_sample['next'])
-                            continue
+                        print("Skipping scene, can wasn't close enough " + str(scene_number))
+                        break
 
                     normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
@@ -205,6 +207,8 @@ def train():
                         print("Skipping scene " + str(scene_number))
                         continue
 
+                    print("Scene: " + str(scene_number))
+
                     first_sample_token = scene['first_sample_token']
 
                     current_sample = nusc.get('sample', first_sample_token)
@@ -223,11 +227,8 @@ def train():
                         current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)
 
                         if current_vehicle_can == {}:
-                            if current_sample['next'] == '':
-                                break
-                            else:
-                                current_sample = nusc.get('sample', current_sample['next'])
-                                continue
+                            print("Skipping scene, can wasn't close enough " + str(scene_number))
+                            break
                         
                         normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 

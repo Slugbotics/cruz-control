@@ -18,7 +18,7 @@ spec:
           cd /pvcvolume/cruz-control/nuscenes
           git config --global --add safe.directory /pvcvolume/cruz-control
           git pull
-          python3 nuscenes_run.py '/pvcvolume/nuscenes' 'v1.0-mini'
+          python3 nuscenes_run.py '/pvcvolume/nuscenes' 'v1.0-trainval'
 
         volumeMounts:
         - name: pvcvolume
@@ -30,8 +30,17 @@ spec:
             nvidia.com/gpu: "1"
           requests:
             memory: 10Gi
-            cpu: "2"
+            cpu: "4"
             nvidia.com/gpu: "1"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-RTX-A6000
       volumes:
       - name: pvcvolume
         persistentVolumeClaim:
