@@ -144,7 +144,7 @@ def train():
             for scene in scenes:
                 scene_number = int(scene['name'].split("-")[1])
 
-                if scene_number in nusc_can.can_blacklist:
+                if scene_number in nusc_can.can_blacklist or scene_number == 953:
                     print("Skipping scene " + str(scene_number))
                     continue
                     
@@ -217,7 +217,6 @@ def train():
                     current_sample = nusc.get('sample', first_sample_token)
 
                     scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
-                    scene_imu_cans = nusc_can.get_messages(scene['name'], 'ms_imu')
 
                     while True:
                         sensor = "CAM_FRONT"
