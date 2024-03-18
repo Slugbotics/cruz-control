@@ -206,7 +206,7 @@ def train():
                 for scene in scenes:
                     scene_number = int(scene['name'].split("-")[1])
 
-                    if scene_number in nusc_can.can_blacklist:
+                    if scene_number in nusc_can.can_blacklist or scene_number == 953:
                         print("Skipping scene " + str(scene_number))
                         continue
 
@@ -246,9 +246,11 @@ def train():
                         val_total_loss = criterion(outputs, label)
 
                         if current_sample['next'] == '':
+                            print("Finished scene " + str(scene_number))
                             break
                         else:
                             current_sample = nusc.get('sample', current_sample['next'])
+                            print("Next sample: " + str(current_sample['next']))
 
         print(
             f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss.item():.4f}, Validation Loss: {val_total_loss.item():.4f}"
