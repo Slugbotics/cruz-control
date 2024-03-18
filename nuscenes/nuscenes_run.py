@@ -38,12 +38,8 @@ def get_closest_can(time, can_objects):
     # print("Time difference: ", prev_diff)
     return closest
 
-def normalize(value, min, max):
-    # Figure out how 'wide' each range is
-    leftSpan = max - min
-
-    # Convert the left range into a 0-1 range (float)
-    return float(value - min) / float(leftSpan)
+def num_to_range(num, inMin, inMax, outMin, outMax):
+  return outMin + (float(num - inMin) / float(inMax - inMin) * (outMax - outMin))
 
 def normalize_vehicle_monitor_can(can_obj):
     new_obj = {}
@@ -57,9 +53,13 @@ def normalize_vehicle_monitor_can(can_obj):
     min_throttle = 0
     max_throttle = 1000
 
-    new_obj["brake"] = normalize(can_obj["brake"], min_brake, max_break)
-    new_obj["steering"] = normalize(can_obj["steering"], min_steering, max_steering)
-    new_obj["throttle"] = normalize(can_obj["throttle"], min_throttle, max_throttle)
+    new_obj["brake"] = num_to_range(can_obj["brake"], min_brake, max_break, 0, 1)
+    new_obj["steering"] = num_to_range(can_obj["steering"], min_steering, max_steering, -1, 1)
+    new_obj["throttle"] = num_to_range(can_obj["throttle"], min_throttle, max_throttle, 0, 1)
+
+    new_obj["brake"] = round(new_obj["brake"], 1)
+    new_obj["steering"] = round(new_obj["steering"], 1)
+    new_obj["throttle"] = round(new_obj["throttle"], 1)
 
     return new_obj
 
@@ -112,7 +112,6 @@ transform = transforms.Compose(
 model_file_name = "nuscenes_model_v1.1.pth"
 
 def train():
-    # path = sys.argv[1]
     print("Model Version V1.1")
     print("final model weights will be saved to: " + model_path)
 
@@ -124,11 +123,6 @@ def train():
     val_size = len(scenes) - train_size
     train, val = random_split(scenes, [train_size, val_size])
 
-    # multithreaded data loading
-    trainloader = DataLoader(train, batch_size=batch_size, shuffle=True, num_workers=2)
-
-    valloader = DataLoader(val, batch_size=batch_size, shuffle=False, num_workers=2)
-
     net = LaneCNN().to(device)
 
     criterion = nn.MSELoss()
@@ -139,7 +133,7 @@ def train():
     for epoch in range(epochs):
         net.train()
         for scene in train:
-            print("Training on scene: " + scene['name'])
+            print("Training on scene " + scene['name'])
             scene_number = int(scene['name'].split("-")[1])
 
             if scene_number in nusc_can.can_blacklist:
@@ -200,7 +194,8 @@ def train():
         net.eval()
         with torch.no_grad():
             for scene in val:
-                print("Training on scene: " + scene['name'])
+                print("Validating on scene " + scene['name'])
+
                 scene_number = int(scene['name'].split("-")[1])
 
                 if scene_number in nusc_can.can_blacklist:
@@ -212,7 +207,6 @@ def train():
                 current_sample = nusc.get('sample', first_sample_token)
 
                 scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
-                scene_imu_cans = nusc_can.get_messages(scene['name'], 'ms_imu')
 
                 while True:
                     sensor = "CAM_FRONT"
