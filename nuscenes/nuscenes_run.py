@@ -105,9 +105,11 @@ model_path = PATH + "/models"
 
 path = Path(model_path)
 
-if not path.exists():
-    os.mkdir(model_path)
+transform = transforms.Compose(
+        [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
+    )
 
+model_file_name = "nuscenes_model_v1.1.pth"
 
 def train():
     # path = sys.argv[1]
@@ -115,10 +117,6 @@ def train():
     print("final model weights will be saved to: " + model_path)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-    
-    transform = transforms.Compose(
-        [transforms.Resize((224, 224), antialias=True), transforms.ToTensor()]
-    )
 
     scenes = nusc.scene
 
@@ -140,21 +138,81 @@ def train():
 
     for epoch in range(epochs):
         net.train()
-        for scene in trainloader:
-            for scene in scenes:
+        for scene in train:
+            print("Training on scene: " + scene['name'])
+            scene_number = int(scene['name'].split("-")[1])
+
+            if scene_number in nusc_can.can_blacklist:
+                print("Skipping scene " + str(scene_number))
+                continue
+            
+            first_sample_token = scene['first_sample_token']
+
+            current_sample = nusc.get('sample', first_sample_token)
+
+            scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
+
+            while True:
+                sensor = "CAM_FRONT"
+                cam_front_data = nusc.get("sample_data", current_sample["data"][sensor])
+                current_image_path = PATH + "/" + cam_front_data["filename"]
+                img = Image.open(current_image_path)
+
+                img_input = transform(img).to(device)
+            
+                current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)                    
+
+                if current_vehicle_can == {}:
+                    if current_sample['next'] == '':
+                        break
+                    else:
+                        current_sample = nusc.get('sample', current_sample['next'])
+                        continue
+
+                normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
+
+                steering_targets = normal_vm_can['steering']
+                throttle_targets = normal_vm_can['throttle']
+                breaking_targets = normal_vm_can['brake']
+
+                label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)              
+
+                optimizer.zero_grad()
+                
+                # Forward pass
+                outputs = net(img_input)
+
+                # Compute loss
+                total_loss = criterion(outputs, label)
+
+                # Backward pass
+                total_loss.backward()
+
+                # Update weights
+                optimizer.step()
+
+                if current_sample['next'] == '':
+                    break
+                else:
+                    current_sample = nusc.get('sample', current_sample['next'])
+
+        # Validation
+        net.eval()
+        with torch.no_grad():
+            for scene in val:
+                print("Training on scene: " + scene['name'])
                 scene_number = int(scene['name'].split("-")[1])
 
-                if scene_number in nusc_can.can_blacklist or scene_number == 953:
+                if scene_number in nusc_can.can_blacklist:
                     print("Skipping scene " + str(scene_number))
                     continue
-                    
-                print("Scene: " + str(scene_number))
-                
+
                 first_sample_token = scene['first_sample_token']
 
                 current_sample = nusc.get('sample', first_sample_token)
 
                 scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
+                scene_imu_cans = nusc_can.get_messages(scene['name'], 'ms_imu')
 
                 while True:
                     sensor = "CAM_FRONT"
@@ -163,93 +221,32 @@ def train():
                     img = Image.open(current_image_path)
 
                     img_input = transform(img).to(device)
-                
-                    current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)               
+
+                    current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)
 
                     if current_vehicle_can == {}:
-                        print("Skipping scene, can wasn't close enough " + str(scene_number))
-                        break
-
+                        if current_sample['next'] == '':
+                            break
+                        else:
+                            current_sample = nusc.get('sample', current_sample['next'])
+                            continue
+                    
                     normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
 
                     steering_targets = normal_vm_can['steering']
                     throttle_targets = normal_vm_can['throttle']
                     breaking_targets = normal_vm_can['brake']
 
-                    label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)              
+                    label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
 
-                    optimizer.zero_grad()
-                    
-                    # Forward pass
                     outputs = net(img_input)
 
-                    # Compute loss
-                    total_loss = criterion(outputs, label)
-
-                    # Backward pass
-                    total_loss.backward()
-
-                    # Update weights
-                    optimizer.step()
+                    val_total_loss = criterion(outputs, label)
 
                     if current_sample['next'] == '':
-                        print("Finished scene " + str(scene_number))
                         break
                     else:
                         current_sample = nusc.get('sample', current_sample['next'])
-                        print("Next sample: " + str(current_sample['next']))
-
-        # Validation
-        net.eval()
-        with torch.no_grad():
-            for scene in valloader:
-                for scene in scenes:
-                    scene_number = int(scene['name'].split("-")[1])
-
-                    if scene_number in nusc_can.can_blacklist or scene_number == 953:
-                        print("Skipping scene " + str(scene_number))
-                        continue
-
-                    print("Scene: " + str(scene_number))
-
-                    first_sample_token = scene['first_sample_token']
-
-                    current_sample = nusc.get('sample', first_sample_token)
-
-                    scene_vehicle_monitor = nusc_can.get_messages(scene['name'], 'vehicle_monitor')
-
-                    while True:
-                        sensor = "CAM_FRONT"
-                        cam_front_data = nusc.get("sample_data", current_sample["data"][sensor])
-                        current_image_path = PATH + "/" + cam_front_data["filename"]
-                        img = Image.open(current_image_path)
-
-                        img_input = transform(img).to(device)
-
-                        current_vehicle_can = get_closest_can(current_sample["timestamp"], scene_vehicle_monitor)
-
-                        if current_vehicle_can == {}:
-                            print("Skipping scene, can wasn't close enough " + str(scene_number))
-                            break
-                        
-                        normal_vm_can = normalize_vehicle_monitor_can(current_vehicle_can)
-
-                        steering_targets = normal_vm_can['steering']
-                        throttle_targets = normal_vm_can['throttle']
-                        breaking_targets = normal_vm_can['brake']
-
-                        label = torch.FloatTensor([steering_targets, throttle_targets, breaking_targets]).to(device)
-
-                        outputs = net(img_input)
-
-                        val_total_loss = criterion(outputs, label)
-
-                        if current_sample['next'] == '':
-                            print("Finished scene " + str(scene_number))
-                            break
-                        else:
-                            current_sample = nusc.get('sample', current_sample['next'])
-                            print("Next sample: " + str(current_sample['next']))
 
         print(
             f"Epoch {epoch + 1}/{epochs}, Loss: {total_loss.item():.4f}, Validation Loss: {val_total_loss.item():.4f}"
@@ -260,7 +257,7 @@ def train():
         )
 
     print("Finished training")
-    torch.save(net.state_dict(), os.path.join(model_path, f"model_final.pth"))
+    torch.save(net.state_dict(), os.path.join(model_path, model_file_name))
 
 
 if __name__ == "__main__":
