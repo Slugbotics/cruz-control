@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jonathan-nuscenes-pod
+spec:
+  containers:
+  - name: vol-container
+    image: ubuntu
+    command: ["sh", "-c", "apt-get update && sleep infinity"]
+    resources:
+      limits:
+        memory: 2Gi
+        cpu: "2"
+      requests:
+        memory: 100Mi
+        cpu: 100m
+    volumeMounts:
+    - mountPath: /pvcvolume
+      name: pvc
+  restartPolicy: Never
+  volumes:
+  - name: pvc
+    persistentVolumeClaim:
+      claimName: jonathan-carla-cache

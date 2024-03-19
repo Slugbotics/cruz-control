@@ -22,10 +22,20 @@ spec:
           requests:
             memory: 1Gi
             cpu: "1"
+      # Need to use affinity nautilus.io/linstor
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/linstor
+                operator: In
+                values:
+                - "true"
       volumes:
       - name: pvcvolume
         persistentVolumeClaim:
-          claimName: jonathan-nuscenes
+          claimName: jonathan-nuscenes-linstor
       restartPolicy: Never
   backoffLimit: 1
 

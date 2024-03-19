@@ -11,20 +11,30 @@ spec:
         command:
         - sh
         - -c
-        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git python3 python3-pip && git pull && pip3 install requests && pip3 install tqdm && python3 download_nuscenes.py 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lmMmVZSUxUblpZPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206bmV3c19sZXR0ZXIiOiIxIiwiY3VzdG9tOmNvdW50cnkiOiJVbml0ZWQgU3RhdGVzIiwic3ViIjoiNDlmMzdjODQtZDM1NC00NTczLTliOTEtNGFmNDY5YWM1MzU2IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX0c1NWVQenVzcCIsImNvZ25pdG86dXNlcm5hbWUiOiI0OWYzN2M4NC1kMzU0LTQ1NzMtOWI5MS00YWY0NjlhYzUzNTYiLCJnaXZlbl9uYW1lIjoiSm9uYXRoYW4iLCJjdXN0b206Y29tcGFueSI6IlVDIFNhbnRhIENydXoiLCJhdWQiOiI3ZnE1anZzNWZmczFjNTBoZDN0b29iYjNiOSIsImV2ZW50X2lkIjoiMzM1NGQ1ZmEtMzRkYy00ZmRiLThkN2QtNDUwMTdkZWMwNDU5IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTAzNTE3NTMsImV4cCI6MTcxMDM1NTM1MywiaWF0IjoxNzEwMzUxNzUzLCJmYW1pbHlfbmFtZSI6Ik1vcnJpcyIsImVtYWlsIjoiam93ZW1vcnJAdWNzYy5lZHUifQ.GHo0xUkjrFHXPb07OvdaJ2yUjGJdrbsaMxnzmhLW9cEQHq1J1SkLy4xVU2x1QgqJoP8cemx2MlVoD8NBWukeIqdjMLzCAYYN1UJYwKFxhVfZOPJIo_RpFoaGLkZA-FLbQ77XGsM0ju2-9qObAiZDX14XwuBuqwY2EayXkMadHlFMKK8T66R8F1ZMtTM9EV1ZbsDyo6gyRWDPRV7x1wB3aZ7Uy4X-lDgLpgIuXFrZQM_F5pC7FJQpRSW4Cn3NEV4YCAW2NbamTxzCh8QzzErj9hy5bel7PIwcIxgadOaaP4Ul0KWpLEUaA9VV16ge0ZKE2v4rEj07josqWZyPJbc2xA'"
+        - "cd /pvcvolume/cruz-control/nuscenes && apt-get update && apt-get --assume-yes install git python3 python3-pip && git pull && pip3 install requests && pip3 install tqdm && python3 download_nuscenes.py 'eyJraWQiOiJaUk14Z2gwZHg0UnRGVGR1VlhpZm9pa2U0bVJGaVlKN1lmMmVZSUxUblpZPSIsImFsZyI6IlJTMjU2In0.eyJjdXN0b206bmV3c19sZXR0ZXIiOiIxIiwiY3VzdG9tOmNvdW50cnkiOiJVbml0ZWQgU3RhdGVzIiwic3ViIjoiNDlmMzdjODQtZDM1NC00NTczLTliOTEtNGFmNDY5YWM1MzU2IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX0c1NWVQenVzcCIsImNvZ25pdG86dXNlcm5hbWUiOiI0OWYzN2M4NC1kMzU0LTQ1NzMtOWI5MS00YWY0NjlhYzUzNTYiLCJnaXZlbl9uYW1lIjoiSm9uYXRoYW4iLCJjdXN0b206Y29tcGFueSI6IlVDIFNhbnRhIENydXoiLCJhdWQiOiI3ZnE1anZzNWZmczFjNTBoZDN0b29iYjNiOSIsImV2ZW50X2lkIjoiODc4Y2Q5YmItMzVkYi00ZjA2LWIwZDAtY2U2NDEyZjdjYTQyIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTA4MTQ0OTcsImV4cCI6MTcxMDgxODA5NywiaWF0IjoxNzEwODE0NDk3LCJmYW1pbHlfbmFtZSI6Ik1vcnJpcyIsImVtYWlsIjoiam93ZW1vcnJAdWNzYy5lZHUifQ.awHLk5_fyi369IQlCqn8mWq1Ia46cZtFOFKPRUsrKcCKDa5riApgW7sRUK7SOzEg9wEf9PjvRVqlsNV6ySBmNLC6OyYjS7n0u709qAG7g6mrP_F94toQ7txqIdYDezeZHXwDvjXL2x5I8LM89JoHvODxuIW69x4Hake08PY9IH3EtbZmiBcM3VwhtHnzrpWp6_29QfNWAcP-1jYn3fA-PRulCmYKQ7oyCb_XOwLPBHV_0xtPtY4Dexlv5trRzFFrQfDhG6YsyNktYjwjxmhDT1193JZwOpOuO5BfKCs0GHniK-498rbxsORtK0KbKBP4ouqLLMQAjVAz2j5Avqh-Pg'"
         volumeMounts:
         - name: pvcvolume
           mountPath: /pvcvolume
         resources:
           limits:
-            memory: 5Gi
-            cpu: "3"
+            memory: 10Gi
+            cpu: "10"
           requests:
             memory: 1Gi
             cpu: "1"
+      # Need to use affinity nautilus.io/linstor
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/linstor
+                operator: In
+                values:
+                - "true"
       volumes:
       - name: pvcvolume
         persistentVolumeClaim:
-          claimName: jonathan-nuscenes
+          claimName: jonathan-nuscenes-linstor
       restartPolicy: Never
   backoffLimit: 1
