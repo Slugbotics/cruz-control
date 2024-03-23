@@ -99,8 +99,8 @@ class LaneCNN(nn.Module):
 
 
 learning_rate = 0.001
-batch_size = 10
-epochs = 50
+batch_size = 64
+epochs = 10
 model_path = PATH + "/models"
 
 path = Path(model_path)
