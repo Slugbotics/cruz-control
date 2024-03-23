@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: jonathan-nuscenes-pod
+  name: jonathan-nuscenes-pod-pytorch
 spec:
   containers:
   - name: vol-container
