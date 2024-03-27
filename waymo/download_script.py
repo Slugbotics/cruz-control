@@ -5,7 +5,7 @@ def split_file(file_path, output_folder):
     # Read the content of the text file
     with open(file_path, 'r', newline='') as file:
         lines = file.readlines()
-
+    print(lines[2])
     total_lines = len(lines)
     lines_per_portion = total_lines // 10  # Calculate the number of lines per portion
 
@@ -18,18 +18,19 @@ def split_file(file_path, output_folder):
 
         # Write portion to a separate file
         portion_file_path = f"{output_folder}/portion_{i + 1}.txt"
-        with open(portion_file_path, 'w', newline='') as portion_file:
-            portion_file.writelines(portion_content)
+        with open(portion_file_path, 'w', newline='\n') as portion_file:
+            for x in range(start_index, end_index):
+                portion_file.write(lines[x])
             
 # Example usage:
-# split_file("training_data.txt", "training_file_names")
+split_file("training_data.txt", "training_file_names")
 
 def download_files(batch_number, dest_path, file_path):
     fname = 'portion_' + str(batch_number) + ".txt"
-    with open(file_path + fname, 'rb') as file:
+    with open(file_path + fname, 'r') as file:
         lines = file.readlines()
         
     for l in lines:
         os.system(f"gsutil -m cp \"{l}\" .")
         
-download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
+# download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
