@@ -6,7 +6,7 @@ spec:
   containers:
   - name: vol-container
     image: ubuntu
-    command: ["sh", "-c", "apt-get update && apt --assume-yes install rsync tmux vim && apt-get --assume-yes install apt-transport-https ca-certificates gnupg curl && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && echo 'deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main' | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && apt-get update && apt-get --assume-yes install google-cloud-cli && sleep infinity"]
+    command: ["sh", "-c", "apt-get update && apt --assume-yes install python3 git rsync tmux vim && apt-get --assume-yes install apt-transport-https ca-certificates gnupg curl && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && echo 'deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main' | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && apt-get update && apt-get --assume-yes install google-cloud-cli && sleep infinity"]
     resources:
       limits:
         memory: 10Gi
