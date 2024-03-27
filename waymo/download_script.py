@@ -26,10 +26,10 @@ def split_file(file_path, output_folder):
 
 def download_files(batch_number, dest_path, file_path):
     fname = 'portion_' + str(batch_number) + ".txt"
-    with open(file_path + fname, 'r', newline='') as file:
+    with open(file_path + fname, 'rb') as file:
         lines = file.readlines()
         
     for l in lines:
-        os.system(f"gsutil -m cp \"{l}\"")
+        os.system(f"gsutil -m cp \"{l}\" .")
         
-download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/")
+download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
