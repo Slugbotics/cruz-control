@@ -23,14 +23,14 @@ def split_file(file_path, output_folder):
                 portion_file.write(lines[x])
             
 # Example usage:
-split_file("training_data.txt", "training_file_names")
+# split_file("training_data.txt", "training_file_names")
 
 def download_files(batch_number, dest_path, file_path):
     fname = 'portion_' + str(batch_number) + ".txt"
     with open(file_path + fname, 'r') as file:
         lines = file.readlines()
-        
-    for l in lines:
-        os.system(f"gsutil -m cp \"{l}\" .")
-        
-# download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
+    os.system("gsutil -m cp \"{lines[1]}\" .")
+    # for l in lines:
+    #     os.system(f"gsutil -m cp \"{l}\" .")
+    
+download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
