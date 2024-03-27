@@ -3,7 +3,7 @@ import os
 
 def split_file(file_path, output_folder):
     # Read the content of the text file
-    with open(file_path, 'r', newline='') as file:
+    with open(file_path, 'rb') as file:
         lines = file.readlines()
     print(lines[2])
     total_lines = len(lines)
@@ -18,12 +18,12 @@ def split_file(file_path, output_folder):
 
         # Write portion to a separate file
         portion_file_path = f"{output_folder}/portion_{i + 1}.txt"
-        with open(portion_file_path, 'w', newline='\n') as portion_file:
+        with open(portion_file_path, 'wb') as portion_file:
             for x in range(start_index, end_index):
                 portion_file.write(lines[x])
             
 # Example usage:
-# split_file("training_data.txt", "training_file_names")
+split_file("training_data.txt", "training_file_names")
 
 def download_files(batch_number, dest_path, file_path):
     fname = 'portion_' + str(batch_number) + ".txt"
@@ -33,4 +33,4 @@ def download_files(batch_number, dest_path, file_path):
     # for l in lines:
     #     os.system(f"gsutil -m cp \"{l}\" .")
     
-download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
+# download_files(1, "/pvcvolume/waymo-motion/lidar_and_camera/training/", "/pvcvolume/cruz-control/waymo/training_file_names/")
