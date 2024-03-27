@@ -12,8 +12,8 @@ spec:
         memory: 10Gi
         cpu: "10"
       requests:
-        memory: 1Gi
-        cpu: 1m
+        memory: 4Gi
+        cpu: "4"
     volumeMounts:
     - mountPath: /pvcvolume
       name: waymo-motion
