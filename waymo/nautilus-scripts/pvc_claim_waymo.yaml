@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: waymo-motion
+  name: waymo-perception
 spec:
   storageClassName: rook-cephfs
   accessModes:
   - ReadWriteMany
   resources:
     requests:
-      storage: 5Ti
+      storage: 1Ti

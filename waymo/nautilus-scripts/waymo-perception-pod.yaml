@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: daksh-waymo-perception-access
+spec:
+  containers:
+  - name: vol-container
+    image: ubuntu
+    command: ["sh", "-c", "apt-get update && apt --assume-yes install python3 git tmux vim && sleep infinity"]
+    resources:
+      limits:
+        memory: 10Gi
+        cpu: "10"
+      requests:
+        memory: 1Gi
+        cpu: "2"
+    volumeMounts:
+    - mountPath: /pvcvolume
+      name: waymo-perception
+  restartPolicy: Never
+  volumes:
+  - name: waymo-perception
+    persistentVolumeClaim:
+      claimName: waymo-perception
