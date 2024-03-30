@@ -1,0 +1,1 @@
+gs://waymo_open_dataset_motion_v_1_2_1/uncompressed/lidar_and_camera/training/:

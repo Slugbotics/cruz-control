@@ -1,0 +1,9 @@
+## To download the Waymo Dataset, do the following steps:
+
+1. run ```kubectl create -f waymo_pod.yaml```
+2. wait for the container to be created. check the pod status using this command:```kubectl get pods``` 
+3. run ```kubectl exec -it daksh-waymo-motion-access -- /bin/bash``` to get CLI access to the pod
+4. run ```gcloud auth login``` and copy paste the link to your browser, then log in with your google account
+5. ```cd pvcvolume/waymo-motion/```
+6. run ```tmux attach -t 0``` to attach to the pre-existing tmux window, if there is one. Otherwise, create a new tmux window using ```tmux```
+7. Attach to the pre-existing tmux window and then run ```gsutil -m rsync -irC "gs://waymo_open_dataset_motion_v_1_2_1/uncompressed" .```
