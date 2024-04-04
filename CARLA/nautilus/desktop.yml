@@ -43,20 +43,17 @@ spec:
           value: "fasle"
 
         - name: TURN_HOST
-
           value: "turn.nrp-nautilus.io"
+
         - name: TURN_PORT
           value: "3478"
-
-        - name: TURN_USERNAME
-          value: "1710535614:jmorris"
 
         # Change to `tcp` if the UDP protocol is throttled or blocked in your client network, or when the TURN server does not support UDP
         - name: TURN_PROTOCOL
           value: "tcp"
 
-        - name: TURN_PASSWORD
-          value: "elrNjEHem0p8gEeza0KaCuxhnDU="
+        - name: TURN_SHARED_SECRET
+          value: "cup5dBCknRijK4roVJSEUFikEpu8xdKAqGxubX7CbZ2YkpgC4zFsU5Ukqf97PHsE"
 
         # You need a valid hostname and a certificate from authorities such as ZeroSSL (Let's Encrypt may have issues) to enable this
         - name: TURN_TLS

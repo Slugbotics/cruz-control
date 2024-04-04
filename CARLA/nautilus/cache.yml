@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: jonathan-carla-cache
 spec:
-  storageClassName: seaweedfs-storage-nvme
+  storageClassName: rook-cephfs
   accessModes:
   - ReadWriteMany
   resources:

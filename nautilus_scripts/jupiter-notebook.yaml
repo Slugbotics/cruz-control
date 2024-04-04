@@ -10,10 +10,10 @@ spec:
     resources:
       limits:
         memory: 20Gi
-        cpu: "8"
+        cpu: "16"
         nvidia.com/gpu: 1
       requests:
-        memory: 9Gi
+        memory: 20Gi
         cpu: "2"
         nvidia.com/gpu: 1
     volumeMounts:
