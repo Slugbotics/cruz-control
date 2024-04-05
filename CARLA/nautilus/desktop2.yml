@@ -101,12 +101,12 @@ spec:
           protocol: TCP
         resources:
           limits:
-            memory: 64Gi
+            memory: 32Gi
             cpu: "16"
             nvidia.com/gpu: 1
           requests:
-            memory: 100Mi
-            cpu: 100m
+            memory: 8Gi
+            cpu: "4"
         volumeMounts:
         - mountPath: /dev/shm
           name: dshm
@@ -142,3 +142,6 @@ spec:
 #                operator: In
 #                values:
 #                - us-west
+
+# Command to run before creating deployment: mypass is the password for entry "Quotations is turn-shared-secret"
+# kubectl create secret generic my-pass --from-literal=my-pass=mypass --from-literal=turn-secret="cup5dBCknRijK4roVJSEUFikEpu8xdKAqGxubX7CbZ2YkpgC4zFsU5Ukqf97PHsE"
