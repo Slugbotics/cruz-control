@@ -16,9 +16,9 @@ spec:
         cpu: "6"
     volumeMounts:
     - mountPath: /pvcvolume
-      name: waymo-motion
+      name: waymo-motion-rbd
   restartPolicy: Never
   volumes:
-  - name: waymo-motion
+  - name: waymo-motion-rbd
     persistentVolumeClaim:
-      claimName: waymo-motion
+      claimName: waymo-motion-rbd
