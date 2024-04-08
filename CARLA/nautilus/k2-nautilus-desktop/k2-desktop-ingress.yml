@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+  name: keshav2-desktop
+spec:
+  rules:
+  - host: k.nrp-nautilus.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: keshav2-desktop
+            port:
+              name: http
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - k.nrp-nautilus.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keshav2-desktop
+  labels:
+    app: egl
+spec:
+  selector:
+    app: k-2
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080

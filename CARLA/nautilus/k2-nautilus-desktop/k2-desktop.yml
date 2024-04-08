@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: egl
+      app: k-2
   template:
     metadata:
       labels:
-        app: egl
+        app: k-2
     spec:
       hostname: egl
       containers:
@@ -142,5 +142,5 @@ spec:
 #                values:
 #                - us-west
 
-# Command to run before creating deployment: mypass is the password for entry "Quotations is turn-shared-secret"
+# Command to run before creating deployment: mypass is the password for entry, Quotations is turn-shared-secret
 # kubectl create secret generic my-pass --from-literal=my-pass=mypass --from-literal=turn-secret="cup5dBCknRijK4roVJSEUFikEpu8xdKAqGxubX7CbZ2YkpgC4zFsU5Ukqf97PHsE"
