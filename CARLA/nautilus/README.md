@@ -145,7 +145,7 @@ In Desktop, spec.selector.matchLabels.app and spec.template.metadata.labels.app
 ## Accessing the Desktop
 
 Now that all the files and their respective editing is done, the instances for those files have to be created.
-Run the following commands in this order, replacing ````name-descriptor```` with the file name.
+Run the following commands in this order, replacing ```'name-descriptor'``` with the file name.
 
 ```
 kubectl create -f 'name-storage'.yml
@@ -158,7 +158,7 @@ This will initialize all the required instances. After ensuring the pod is runni
 After finishing work on the instances, delete them via:
 ```
 kubectl delete ingress yourname/initial-desktop
-kubectl create deployment yourname/initial-desktop
+kubectl delete deployment yourname/initial-desktop
 ```
 You may delete storage using an identical process, however if work is saved on them it is not recommended.
 
