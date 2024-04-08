@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: j-carla
+spec:
+  storageClassName: seaweedfs-storage-nvme
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 256Gi

@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 7e9bc33d55d55577e2692b35e48033c0aee9b9c4d45aeb7c5cb3997dd90340c8
+    cni.projectcalico.org/podIP: 10.244.20.22/32
+    cni.projectcalico.org/podIPs: 10.244.20.22/32
+  creationTimestamp: "2024-04-05T01:26:32Z"
+  generateName: jonathan-desktop-6f46b94c7f-
+  labels:
+    app: xgl
+    pod-template-hash: 6f46b94c7f
+  name: jonathan-desktop-6f46b94c7f-ltsmq
+  namespace: aiea-slugbotics
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: jonathan-desktop-6f46b94c7f
+    uid: b08d1923-a61e-4fa5-87b6-e4b27436d35e
+  resourceVersion: "7460049028"
+  uid: 84c3ed1a-f06b-4a62-b913-333d40039045
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: NotIn
+            values:
+            - ucsd-suncave
+          - key: nvidia.com/gpuq.product
+            operator: NotIn
+            values:
+            - NVIDIA-TITAN-RTX
+            - NVIDIA-RTX-A5000
+            - Quadro-RTX-6000
+            - Tesla-V100-SXM2-32GB
+            - NVIDIA-A40
+            - NVIDIA-RTX-A6000
+            - Quadro-RTX-8000
+            - NVIDIA-A100-PCIE-40GB
+            - NVIDIA-A100-SXM4-80GB
+            - NVIDIA-A100-80GB-PCIe
+            - NVIDIA-GH200-480GB
+  containers:
+  - env:
+    - name: TZ
+      value: UTC
+    - name: SIZEW
+      value: "1920"
+    - name: SIZEH
+      value: "1080"
+    - name: REFRESH
+      value: "60"
+    - name: DPI
+      value: "96"
+    - name: CDEPTH
+      value: "24"
+    - name: VIDEO_PORT
+      value: DP-0
+    - name: PASSWD
+      valueFrom:
+        secretKeyRef:
+          key: my-pass
+          name: my-pass
+    - name: WEBRTC_ENCODER
+      value: nvh264enc
+    - name: WEBRTC_ENABLE_RESIZE
+      value: "false"
+    - name: ENABLE_BASIC_AUTH
+      value: "true"
+    - name: TURN_HOST
+      value: turn.nrp-nautilus.io
+    - name: TURN_PORT
+      value: "3478"
+    - name: TURN_SHARED_SECRET
+      valueFrom:
+        secretKeyRef:
+          key: turn-secret
+          name: my-pass
+    - name: TURN_PROTOCOL
+      value: tcp
+    - name: TURN_TLS
+      value: "false"
+    image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
+    imagePullPolicy: Always
+    name: xgl
+    ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+    resources:
+      limits:
+        cpu: "16"
+        memory: 32Gi
+        nvidia.com/gpu: "1"
+      requests:
+        cpu: "16"
+        memory: 32Gi
+        nvidia.com/gpu: "1"
+    stdin: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    tty: true
+    volumeMounts:
+    - mountPath: /dev/shm
+      name: dshm
+    - mountPath: /cache
+      name: xgl-cache-vol
+    - mountPath: /home/user
+      name: xgl-root-vol
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-svqnx
+      readOnly: true
+  dnsConfig:
+    nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  dnsPolicy: None
+  enableServiceLinks: true
+  hostname: xgl
+  nodeName: k8s-gpu-03.sdsc.optiputer.net
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: PreferNoSchedule
+    key: nvidia.com/gpu
+    operator: Exists
+  volumes:
+  - emptyDir:
+      medium: Memory
+    name: dshm
+  - name: xgl-cache-vol
+    persistentVolumeClaim:
+      claimName: jonathan-carla-cache
+  - name: xgl-root-vol
+    persistentVolumeClaim:
+      claimName: jonathan-carla
+  - name: kube-api-access-svqnx
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2024-04-05T01:27:11Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2024-04-05T01:30:48Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2024-04-05T01:30:48Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2024-04-05T01:27:11Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://5688a83931ae8f1a4e05df4d6f0e24c1e9232f119a0d331cf590e88561c26b09
+    image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
+    imageID: ghcr.io/selkies-project/nvidia-glx-desktop@sha256:8d18870e26fc3c449e6b35ce43145e699e92d540dfde13cb14c31b9257ea9d7f
+    lastState: {}
+    name: xgl
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2024-04-05T01:30:47Z"
+  hostIP: 198.17.101.69
+  phase: Running
+  podIP: 10.244.20.22
+  podIPs:
+  - ip: 10.244.20.22
+  qosClass: Guaranteed
+  startTime: "2024-04-05T01:27:11Z"
