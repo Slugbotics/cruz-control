@@ -57,9 +57,9 @@ storage: 16 Gi
 
 ### Desktop
 
-The framework file is supplied on the Nautilus GUI Desktop link before, either the glx or egl desktop format can be used by egl is recommended. These both can be found under the usage subsection in the link.
+The framework file is supplied on the Nautilus GUI Desktop link, either the glx or egl desktop format can be used by egl is recommended. These both can be found under the usage subsection in the link.
 
-As before, there are some aspecits requiring change. The changed are this ('section'. indentify the section these changes fall under on the file):
+As before, there are some aspecits requiring change. The changes are thus ('section'. identify the section these changes fall under on the file):
 ```
 metadata/name: yourname/initial-desktop
 name: TURN-PROTOCOL. value: "tcp"
@@ -82,13 +82,13 @@ name: egl-root-vol
 persistentVolumeClaim:
     claimName: yourname/initial-purpose
 ```
-Make sure to remove the two "emptyDir: {}" lines. Accessing other existing volumen containers is also possible via adding more lines of claims.
+Make sure to remove the two "emptyDir: {}" lines. Accessing other existing volume containers is also possible via adding more lines of claims.
 
 This finishes creating the appropriate files. These can be any name, but it is suggested to have the same system as yourname/initial at start for identification.
 
 ## Setting the networking
 
-Before we can launch the desktop, we need to prepare another additional file. Our current files allow us to create the pods and storage volumes, which we can access via a method of port forwarding. However, this method is unstable and lacks performance. The appropriate method, is to create an ingress and service file.
+Before we can launch the desktop, we need to prepare another additional file. Our current files allow us to create the pods and storage volumes, which we can access via a method of port forwarding. However, this method is unstable and lacks performance. The appropriate method is to create an ingress and service file.
 
 The file format is thus:
 ```
@@ -153,7 +153,7 @@ kubectl create -f 'name-cache'.yml
 kubectl create -f 'name-desktop'.yml
 kubectl create -f 'name-ingress'.yml
 ```
-This will initialize all the required instances. After ensuring the pod is running, you can access the desktop via ```YOUR_ENDPOINT.nrp-nautilus.io```, replacing ```YOUR_ENDPOINT``` appropriately. This process may take a few minutes. Furthermore, for the first login it may deliver a prompt asking for user and password, whose the values are user and mypass respectively.
+This will initialize all the required instances. After ensuring the pod is running, you can access the desktop via inputting```YOUR_ENDPOINT.nrp-nautilus.io``` into your browser (for any errors with hosting, please the check the Nautilus GUI guide), replacing ```YOUR_ENDPOINT``` appropriately. This process may take a few minutes. Furthermore, for the first login it may deliver a prompt asking for user and password, whose the values are ```user``` and ```mypass``` respectively.
 
 After finishing work on the instances, delete them via:
 ```
